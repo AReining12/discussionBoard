@@ -1,42 +1,22 @@
 <html>
+    <head>
+    </head>
     <body>
+    <form name="input" action="userController.php" method="post" autocomplete="on">
+            <!--Hidden field to determine whether form is register or login-->
+            <input type="hidden" name="action" value="login">
+            <!-- Aligned text boxes-->
+            <fieldset>
+                <b id="username">Username:</b> <input type="text" name="username" required> <br />
+                <b id="password">Password:</b> <input type="text" name="password" required> <br />
+
+            </fieldset>
+
+            <!--Submit section-->
+            <input type="submit" name="login" value="Login">
         <?php
-        // Database connection details
-        $host = 'localhost'; // or your database server address
-        $dbname = 'messageBoard';
-        $username = 'root'; // your database username
-        $password = ''; // your database password
-
-        // Establish a database connection using PDO
-        try {
-            $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-            // Set the PDO error mode to exception
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
-        }
-
-        // Query the database for user data
-        $query = $pdo->query('SELECT * FROM users');
-        $users = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        // Display the data
-        foreach ($users as $user) {
-            if ($_POST['username'] == $user['username'] && $_POST['password'] == $user['password']) {
-                
-                
-                if(isset($_POST['login'])) {
-                    
-                    header("Location: selectDiscussionBoard.html");
-                    exit();
-                }
-
-            }
-            // possibly some sort of message about the password not being recognized here
-            header("Location: login.html");
-            exit();
-
-        }
+        // Anna Reining, 260885420
+        // User login form
         ?>
 
     </body>
