@@ -27,10 +27,14 @@
                 public function registerUser($username, $password, $firstname, $lastname, $email, $groupid){
                     // Call the addUser method of the UserModel
                     $userModel = new UserModel();
-                    $userModel->addUser($username, $password, $firstname, $lastname, $email, $groupid);
+                    $status = $userModel->addUser($username, $password, $firstname, $lastname, $email, $groupid);
                     // user model returns 1 or 2 if $username or email are repeated
                     // otherwise adds user to database and returns 0
-                    header("Location: index.php");
+                    if ($status !== 0) {
+                        header("Location: ../landingpage.html");
+                    } else {
+                        header("Location: ../pages/SelectBoard.html");
+                    }
                     exit();
 
                 }
@@ -65,7 +69,7 @@
             // if the form is submitted
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //echo "here";
-                var_dump($_POST); 
+                //var_dump($_POST); 
 
                 // check if field is set to determine login vs register switch
                 if (isset($_POST['action'])){
@@ -92,11 +96,11 @@
                         case 'login':
                             //echo "username";
                             // get data
-                            $username = $_POST['login_username'];
-                            $password = $_POST['login_password'];
-                            echo "$username";
+                            $username = $_POST['username'];
+                            $password = $_POST['password'];
+                            //echo "$username";
                             //echo "password";
-                            echo "$password";
+                            //echo "$password";
 
                             // instance of UserController
                             $userController = new UserController();
@@ -105,6 +109,8 @@
                             $userController->loginUser($username, $password);
 
                         }
+                } else {
+                    echo "Error: No action specified";
                 }
                 
             }

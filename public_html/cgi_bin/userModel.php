@@ -26,7 +26,7 @@
                     //$stmt = $conn->prepare("CALL registerUser('{$username}', '{$password}', '{$firstname}', '{$lastname}', '{$email}', '{$groupid}')");
                     //$stmt->bind_param("ss", $username, $password, $firstname, $lastname, $email, $groupid);
 
-                    $stmt = $conn->prepare("SELECT registerUser(?, ?, ?, ?, ?, ?)");
+                    $stmt = $conn->prepare("SELECT registerUser(?, ?, ?, ?, ?, ?) AS result");
 
                     // Bind parameters
                     $stmt->bind_param("sssssi", $username, $password, $firstname, $lastname, $email, $groupid);
@@ -35,10 +35,15 @@
                         // Log or handle the error
                         echo "Error: " . $stmt->error;
                     }
+                    
+                    $result = $stmt->get_result();
+                    $fetch = $result->fetch_all(MYSQLI_ASSOC);
+                    $status = $fetch[0]["result"];
 
                     $stmt->close();
                     $conn->close();
 
+                    return $status;
                 }
 
                 public function verifyUser($username, $password){
