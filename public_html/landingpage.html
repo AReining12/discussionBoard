@@ -192,16 +192,20 @@
         <h2>Welcome Back</h2>
         <p>Nice to meet you.</p>
 
-        <!-- Username Input Field -->
-            <div class="prompt-bar"><label for="username">Username</label><br></div>
-        <input type="text" id="username" name="username"><br>
+        <form name="input" action="cgi_bin/userController.php" method="post" autocomplete="on">
+            <!--Hidden field to determine whether form is register or login-->
+            <input type="hidden" name="action" value="login">
+                <!-- Username Input Field -->
+                
+                    <div class="prompt-bar"><label for="username">Username</label><br></div>
+                <input type="text" id="login_username" name="login_username"><br>
 
-        <!-- Password Input Field -->
-            <div class="prompt-bar"><label for="password">Password</label><br></div>
-        <input type="password" id="password" name="password"><br>
+                <!-- Password Input Field -->
+                    <div class="prompt-bar"><label for="password">Password</label><br></div>
+                <input type="password" id="login_password" name="login_password"><br>
 
-        <!-- Login Button -->
-        <button type="submit">Login</button>
+                <!--Submit section-->
+                <input type="submit" name="login" value="Login">
         
         <!-- Additional Options for Registration and Password Recovery -->
         <div class="footer-buttons">
