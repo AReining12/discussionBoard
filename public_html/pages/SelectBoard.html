@@ -71,6 +71,7 @@
             min-height: 95vh; /* Full viewport height */
             background-image: url('../asserts/images/welcome.jpg');
             background-size: cover; 
+            position: relative; /* 使绝对定位的子元素（如 .logout）相对于此元素定位 */
         }
 
         .welcome-text{
@@ -78,10 +79,31 @@
             text-align: center; 
             color: white; 
             position: absolute;
+            display: flex;       /* 启用 flexbox */
+            justify-content: space-between; /* 在项目之间平均分配可用空间 */
+            align-items: center; /* 垂直居中对齐 */
             top: 10%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
+        /*.welcome-text h1 {
+        font-size: 20px;  调整为合适的大小 
+        } */
+
+        .logout {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 10px; /* 根据需要调整边距 */
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: white; /* 可选：添加背景色以增加可见度 */
+            z-index: 100; /* 确保按钮位于其他元素之上 */
+        }
+
         
         /* Course card styling */
         .course-card {
@@ -163,8 +185,11 @@
                     
                     <!-- Welcome Section -->
                     <div class="welcome" id="welcomeSection" style="display: block;">
+                        <div class="logout">
+                            Log Out
+                        </div>
                         <div class="welcome-text">
-                            <h1>Welcome to McGill Discussion System!</h1>
+                            <h1>Welcome to McChat System!</h1>
                         </div>
                     </div>
 
