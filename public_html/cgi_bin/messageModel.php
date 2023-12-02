@@ -57,22 +57,34 @@
                 include('db_connect.php');  // Ensure the database connection is included
 
                 // use LIKE to select messages
-                $sql = "SELECT * FROM messages WHERE message_text LIKE ? AND channel_id = ?";
+                $sql = "SELECT * FROM messages WHERE channel_id = ?";
                 
                 // wildcards
-                $search_query = "%" . $search_query . "%";  
+                $tokens = explode(" ", $search_query);
+                if (($key = array_search("", $tokens)) !== false) {
+                    unset($tokens[$key]);
+                }
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("si", $search_query, $channel_id);
+                $stmt->bind_param("i", $channel_id);
 
                 $stmt->execute();
                 $result = $stmt->get_result();
+                $fetch = $result->fetch_all(MYSQLI_ASSOC);
+                $rows = array();
+                foreach ($fetch as $row) {
+                    foreach ($tokens as $token) {
+                        if (str_contains($row['message_text'], $token)) {
+                            array_push($rows, $row);
+                            break;
+                        }
+                    }
+                }
 
                 echo "Similar Messages: <br>";
 
-                while ($row = $result->fetch_assoc()) {
+                foreach($rows as $row) {
                     echo $row['message_text'] . '<br>';
                 }
-
                 $stmt->close();
                 $conn->close();
             }
