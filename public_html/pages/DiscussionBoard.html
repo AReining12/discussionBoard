@@ -1,0 +1,283 @@
+<!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion Board</title>
+    <link href="../cgi_bin/bootstrap/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+         /* Adjust row to work inside a flex container */
+         .row {
+            display: flex;
+            flex-grow: 1; /* Allow row to grow and fill space */
+        }
+    
+        .container-fluid {
+            display: flex;
+            min-height: 100vh;
+        }
+    
+        .sidebar {
+            flex: 0 0 200px;
+            min-height: 100vh;
+            background-color: #f8f9fa; /* Light grey background */
+            padding: 10px;
+            box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
+        }
+    
+        .sidebar a, .sidebar div {
+            /* display: block; */
+            padding: 8px 10px;
+            margin: 5px 0;
+            color: #333;
+            text-decoration: none;
+        }
+    
+        .sidebar a:hover, .sidebar div:hover {
+            background-color: #e9ecef; /* Light hover effect */
+        }
+
+        .mycourses-link{
+            text-align: center;
+        }
+
+    
+        .search-box {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            align-items: center;
+        }
+
+        .make-post {
+            font-weight: bold;
+            color: #007bff; /* Bootstrap primary color */
+        }
+    
+        .content-area {
+            padding: 20px;
+            background-color: #fff;
+            border-left: 1px solid #ced4da;
+            min-height: 100vh; 
+        }
+    
+        .post-list {
+            list-style-type: none;
+            padding: 0;
+        }
+    
+        .post-list div {
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+        }
+    
+        .post-list div:hover {
+            background-color: #f5f5f5;
+        }
+
+        .welcome {
+        display: block;
+        background-image: url(../asserts/images/welcome2.jpg);
+        min-height: 95vh;
+        background-size: cover;
+        position: relative; /* 为了使用绝对定位的子元素 */
+        padding: 20px; 
+    }
+
+    .welcome-text {
+        font-weight: bold;
+        text-align: center;
+        color: white;
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .spacer {
+        height: 100px; /* 顶部的空白区域高度 */
+    }
+
+    </style>
+
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Left Sidebar -->
+            <div class="col-md-2 sidebar">
+                <a href="SelectBoard.html" class="mycourses-link"><b>My Courses</b></a>
+                <div class="make-post" id="makepost">Make a Post</div>
+                <input type="text" class="form-control search-box" placeholder="Search posts...">
+                <!-- List of posts -->
+                <div class="post-list">
+                    <!-- Dynamically add posts here -->
+                </div>
+            </div>
+
+            <!-- Right Content Area -->
+            <div class="col-md-10" id="contentArea">
+                <!-- Content will be loaded here -->
+                <div id="postDisplayArea"></div>
+
+                <!-- 'Make a Post' Form -->
+                <div id="makepostSection" style="display: none;">
+                    <input type="text" class="form-control" id="postTitle" placeholder="Post Title" style="margin-bottom: 10px;">
+                    <textarea class="form-control" id="postContent" rows="4" placeholder="Post Content" style="margin-bottom: 10px;"></textarea>
+                    <select class="form-control" id="postVisibility" style="margin-bottom: 10px;">
+                        <option value="private">Private</option>
+                        <option value="public">Public</option>
+                    </select>
+                    <button class="btn btn-primary" id="submitPost">Post</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts for functionality -->
+    <script src="../cgi_bin/bootstrap/jquery.min.js"></script>
+    <script src="../cgi_bin/bootstrap/popper.min.js"></script>
+    <script src="../cgi_bin/bootstrap/bootstrap.min.js"></script>
+
+    <script>
+
+        // Function to extract URL parameters (e.g., 'course' from the query string)
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        function handleCourseSpecificLogic() {
+    const courseName = getUrlParameter('course');
+    if (courseName) {
+        // 创建新的欢迎部分元素
+        const welcomeSection = document.createElement('div');
+        welcomeSection.id = 'welcomeSection';
+        welcomeSection.className = 'welcome';
+
+        // 添加一个用于调整高度的空 div
+        const spacerDiv = document.createElement('div');
+        spacerDiv.className = 'spacer';
+        welcomeSection.appendChild(spacerDiv);
+
+        // 创建内部文本容器
+        const welcomeTextDiv = document.createElement('div');
+        welcomeTextDiv.className = 'welcome-text';
+
+        // 添加欢迎消息和课程名称
+        welcomeTextDiv.innerHTML = `
+            <h1>Welcome to McGill Discussion System!</h1>
+            <h2>Discussion Board for ${courseName}</h2>
+        `;
+
+        // 将文本容器添加到欢迎部分
+        welcomeSection.appendChild(welcomeTextDiv);
+
+        // 将欢迎部分添加到内容区域
+        const contentArea = document.getElementById('contentArea');
+        contentArea.prepend(welcomeSection);
+    }
+}
+        
+        // Display make a post page
+        document.addEventListener('DOMContentLoaded', function() {
+        handleCourseSpecificLogic();
+
+            // Event listener for 'Make a Post'
+            document.getElementById('makepost').addEventListener('click', function() {
+                
+                // Hide welcome section
+                if (welcomeSection) {
+                    welcomeSection.style.display = 'none';
+                }
+
+                // Clear the previously displayed post content
+                const postDisplayArea = document.getElementById('postDisplayArea');
+                postDisplayArea.innerHTML = '';
+
+                // Display the 'Make a Post' form section
+                const makepostSection = document.getElementById('makepostSection');
+                makepostSection.style.display = 'block';
+            });
+        });
+
+        // Dummy data for posts (used for demonstration purposes)
+        const posts = [
+            { title: "Post 1", content: "Content for Post 1" },
+            { title: "Post 2", content: "Content for Post 2" },
+            { title: "Post 3", content: "Content for Post 3" },
+            { title: "Post 4", content: "Content for Post 1" },
+            { title: "Post 5", content: "Content for Post 2" },
+            { title: "Post 6", content: "Content for Post 3" },
+            // Add more post data as needed
+        ];
+    
+        // Function to display posts in the sidebar
+        function displayPosts(filteredPosts = posts) {
+            const postList = document.querySelector('.post-list');
+            postList.innerHTML = ''; // Clear existing posts
+    
+            filteredPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('sidebar-link');
+                postElement.textContent = post.title;
+                postElement.onclick = () => displayPostContent(post);
+                postList.appendChild(postElement);
+            });
+
+        }
+    
+        // Function to display post content
+        function displayPostContent(post) {
+            const contentArea = document.getElementById('postDisplayArea');
+            const postContent = `<h3>${post.title}</h3><p>${post.content}</p>`;
+    
+            // Replace existing content in contentArea with the new post content
+            contentArea.innerHTML = postContent;
+
+            // Hide 'Make a Post' form section
+            const makepostSection = document.getElementById('makepostSection');
+            if (makepostSection) {
+                makepostSection.style.display = 'none';
+            }
+            
+            // Hide welcome section
+            if (welcomeSection) {
+                welcomeSection.style.display = 'none';
+            }
+        }
+
+        // Initial display of all posts
+        displayPosts(); 
+
+        // Event listener for search functionality
+        document.querySelector('.search-box').addEventListener('input', function(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            const filteredPosts = posts.filter(post => post.title.toLowerCase().includes(searchTerm));
+            displayPosts(filteredPosts);
+
+        });
+
+    </script>
+    
+</body>
+</html>
