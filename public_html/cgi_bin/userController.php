@@ -20,8 +20,8 @@
         */
             error_reporting(E_ALL);
             ini_set('display_errors', '1');
-            include('session_start.php');
-            require_once('userModel.php');
+            include('../cgi_bin/session_start.php');
+            require_once('../cgi_bin/userModel.php');
             
             class userController {
                 public function registerUser($username, $password, $firstname, $lastname, $email, $groupid){
@@ -43,11 +43,11 @@
                         // user exists in system
                         
                         $_SESSION['loggedin'] = true;
-                        header("Location: select_board.php");
+                        header("Location: ../pages/SelectBoard.html");
                         exit();
                     } else {
                         // if user does not exist in system
-                        header("Location: registration.php");
+                        header("Location: ../landingpage.html");
                         exit();
                     }
                     
@@ -64,9 +64,12 @@
 
             // if the form is submitted
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                //echo "here";
+                var_dump($_POST); 
 
                 // check if field is set to determine login vs register switch
                 if (isset($_POST['action'])){
+                    //echo "here1";
                     $action = $_POST['action'];
 
                     switch($action) {
@@ -83,12 +86,17 @@
                             $userController = new UserController();
 
                             // Call registerUser()
+                            // echo "here";
                             $userController->registerUser($username, $password, $firstname, $lastname, $email, $groupid);
                    
                         case 'login':
+                            //echo "username";
                             // get data
-                            $username = $_POST['username'];
-                            $password = $_POST['password'];
+                            $username = $_POST['login_username'];
+                            $password = $_POST['login_password'];
+                            echo "$username";
+                            //echo "password";
+                            echo "$password";
 
                             // instance of UserController
                             $userController = new UserController();
