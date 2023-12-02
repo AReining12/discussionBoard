@@ -20,8 +20,8 @@
         */
             error_reporting(E_ALL);
             ini_set('display_errors', '1');
-            include('session_start.php');
-            require_once('userModel.php');
+            include('../cgi_bin/session_start.php');
+            require_once('../cgi_bin/userModel.php');
             
             class userController {
                 public function registerUser($username, $password, $firstname, $lastname, $email, $groupid){
@@ -43,11 +43,11 @@
                         // user exists in system
                         
                         $_SESSION['loggedin'] = true;
-                        header("Location: select_board.php");
+                        header("Location: SelectBoard.html");
                         exit();
                     } else {
                         // if user does not exist in system
-                        header("Location: registration.php");
+                        header("Location: ../landingpage.html");
                         exit();
                     }
                     
@@ -89,12 +89,14 @@
                             // get data
                             $username = $_POST['username'];
                             $password = $_POST['password'];
+                            echo "$username";
+                            echo "$password";
 
                             // instance of UserController
                             $userController = new UserController();
 
                             // call loginUser()
-                            $userController->loginUser($username, $password);
+                            // $userController->loginUser($username, $password);
 
                         }
                 }
