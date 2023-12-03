@@ -27,15 +27,18 @@
                 public function registerUser($username, $password, $firstname, $lastname, $email, $groupid){
                     // Call the addUser method of the UserModel
                     $userModel = new UserModel();
-                    $status = $userModel->addUser($username, $password, $firstname, $lastname, $email, $groupid);
+                    $result = $userModel->addUser($username, $password, $firstname, $lastname, $email, $groupid);
                     // user model returns 1 or 2 if $username or email are repeated
-                    // otherwise adds user to database and returns 0
-                    if ($status !== 0) {
+
+                    if ($result == 0){
+                        // otherwise adds user to database and returns 0
                         header("Location: ../landingpage.html");
+                        exit();
                     } else {
-                        header("Location: ../pages/SelectBoard.html");
+                        // header ("Location: ../landingpage.html");
+                        echo "fail";
                     }
-                    exit();
+                    
 
                 }
 
@@ -69,48 +72,49 @@
             // if the form is submitted
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //echo "here";
-                //var_dump($_POST); 
+                var_dump($_POST); 
 
                 // check if field is set to determine login vs register switch
                 if (isset($_POST['action'])){
-                    //echo "here1";
+                    echo "here1";
                     $action = $_POST['action'];
 
                     switch($action) {
                         case 'register':
                             // get data
-                            $username = $_POST['username'];
-                            $password = $_POST['password'];
-                            $firstname = $_POST['firstname'];
-                            $lastname = $_POST['lastname'];
-                            $email = $_POST['email'];
-                            $groupid = $_POST['membertype'];
+                            echo "here2";
+                            $username = $_POST['register_username'];
+                            $password = $_POST['register_password'];
+                            $firstname = $_POST['register_firstname'];
+                            $lastname = $_POST['register_lastname'];
+                            $email = $_POST['register_email'];
+                            //$groupid = $_POST['membertype'];
 
                             // instance of UserController
                             $userController = new UserController();
 
                             // Call registerUser()
-                            // echo "here";
+                            // 
                             $userController->registerUser($username, $password, $firstname, $lastname, $email, $groupid);
-                   
+                            break;
+                            
                         case 'login':
                             //echo "username";
                             // get data
-                            $username = $_POST['username'];
-                            $password = $_POST['password'];
+                            $username = $_POST['login_username'];
+                            $password = $_POST['login_password'];
                             //echo "$username";
                             //echo "password";
                             //echo "$password";
+                            echo "here";
 
                             // instance of UserController
                             $userController = new UserController();
 
                             // call loginUser()
-                            $userController->loginUser($username, $password);
+                            //$userController->loginUser($username, $password);
 
                         }
-                } else {
-                    echo "Error: No action specified";
                 }
                 
             }
