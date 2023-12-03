@@ -191,19 +191,22 @@
         
         <h2>Welcome Back</h2>
         <p>Nice to meet you.</p>
+
         <form name="input" action="./cgi_bin/userController.php" method="post" autocomplete="on">
+            <!--Hidden field to determine whether form is register or login-->
             <input type="hidden" name="action" value="login">
-            <!-- Username Input Field -->
-            <div class="prompt-bar"><label for="username">Username</label><br></div>
-            <input type="text" id="username" name="username"><br>
+                <!-- Username Input Field -->
+                
+                    <div class="prompt-bar"><label for="username">Username</label><br></div>
+                <input type="text" id="login_username" name="login_username"><br>
 
-            <!-- Password Input Field -->
-            <div class="prompt-bar"><label for="password">Password</label><br></div>
-            <input type="password" id="password" name="password"><br>
+                <!-- Password Input Field -->
+                    <div class="prompt-bar"><label for="password">Password</label><br></div>
+                <input type="password" id="login_password" name="login_password"><br>
 
-            <!-- Login Button -->
-            <button type="submit">Login</button>
-        </form>
+                <!--Submit section-->
+                <input type="submit" name="login" value="Login">
+        
         <!-- Additional Options for Registration and Password Recovery -->
         <div class="footer-buttons">
             <a href="#" onclick="showRegister()">Sign Up</a>
@@ -218,40 +221,35 @@
     
     <div class="container" id="register" style="display:none;">
         <h2>Get started !</h2>
+
         <form name="input" action="./cgi_bin/userController.php" method="post" autocomplete="on">
+            <!--Hidden field to determine whether form is register or login-->
             <input type="hidden" name="action" value="register">
-            <input type="hidden" name="membertype" value="1">
-            <!-- Input field for first name -->
-            <label for="firstname">First Name</label><br>
-            <input type="text" id="firstname" name="firstname"><br>
 
-            <!-- Input field for last name -->
-            <label for="lastname">Last Name</label><br>
-            <input type="text" id="lastname" name="lastname"><br>
+                <!-- Input field for first name -->
+                <label for="firstname">First Name</label><br>
+                <input type="text" id="register_firstname" name="register_firstname"><br>
 
-            <!-- Input field for username -->
-            <label for="username">Username</label><br>
-            <input type="text" id="username" name="username"><br>
+                <!-- Input field for last name -->
+                <label for="lastname">Last Name</label><br>
+                <input type="text" id="register_lastname" name="register_lastname"><br>
 
-            <!-- Input field for email -->
-            <label for="email">E-mail</label><br>
-            <input type="email" id="email" name="email"><br>
+                <!-- Input field for username -->
+                <label for="username">Username</label><br>
+                <input type="text" id="register_username" name="register_username"><br>
 
-            <!-- Input fields for password and password confirmation -->
-            <label for="password">Password</label><br>
-            <input type="password" id="password" name="password"><br>
-            <label for="password">Confirm Password</label><br>
-            <input type="password" id="password" name="password"><br>
+                <!-- Input field for email -->
+                <label for="email">E-mail</label><br>
+                <input type="email" id="register_email" name="register_email"><br>
 
-            <!-- Input fields for secure question and answer -->
-            <!-- <label for="secure-question">Secure Question</label><br>
-            <input type="text" id="secure-question" name="secure-question"><br>
-            <label for="secure-answer">Secure Answer</label><br>
-            <input type="text" id="secure-answer" name="secure-answer"><br> -->
+                <!-- Input fields for password and password confirmation -->
+                <label for="password">Password</label><br>
+                <input type="password" id="register_password" name="register_password"><br>
+                <label for="password">Confirm Password</label><br>
+                <input type="password" id="register_password" name="register_password"><br>
 
-            <!-- Buttons for submitting the registration form or returning to the login page -->
-            <button type="submit">Register</button>
-        </form>
+                <!-- Buttons for submitting the registration form or returning to the login page -->
+                <input type="submit" name="register" value="Register">
         <button type="button" onclick="showLogin()">Back to Login</button>
         <div class="jump-to-stuff">
             <a href="#" onclick="showStuff()">Not a student? Click here!</a>
