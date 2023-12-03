@@ -192,7 +192,7 @@
         <h2>Welcome Back</h2>
         <p>Nice to meet you.</p>
 
-        <form name="input" action="./cgi_bin/userController.php" method="post" autocomplete="on">
+        <form name="input" action="./cgi_bin/loginhandler.php" method="post" autocomplete="on">
             <!--Hidden field to determine whether form is register or login-->
             <input type="hidden" name="action" value="login">
                 <!-- Username Input Field -->
@@ -221,10 +221,7 @@
     
     <div class="container" id="register" style="display:none;">
         <h2>Get started !</h2>
-
-        <form name="input" action="./cgi_bin/userController.php" method="post" autocomplete="on">
-            <!--Hidden field to determine whether form is register or login-->
-            <input type="hidden" name="action" value="register">
+        <form name="input" action="./cgi_bin/registrationhandler.php" method="post" autocomplete="on">
 
                 <!-- Input field for first name -->
                 <label for="firstname">First Name</label><br>
