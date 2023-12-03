@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>McGill Discussion System</title>
+    <title>McChat Discussion System</title>
 
     <link href="../cgi_bin/bootstrap/bootstrap.min.css" rel="stylesheet">
     
@@ -87,10 +87,6 @@
             transform: translate(-50%, -50%);
         }
 
-        /*.welcome-text h1 {
-        font-size: 20px;  调整为合适的大小 
-        } */
-
         .logout {
             position: absolute;
             top: 0;
@@ -169,14 +165,19 @@
             <!-- Left Sidebar -->
             <div class="col-md-2 sidebar">
                 <div class="sidebar-header">
-                    <div class="logo">
-                        <img src="../asserts/images/logo.png" alt="Logo" class="img-fluid">
-                    </div>
+                    <!-- Click mcgill logo to show welcome page and log out-->
+                    <button id="logoButton" style="background:none;border:none;padding:0;">
+                        <div class="logo">
+                            <img src="../asserts/images/logo.png" alt="Logo" class="img-fluid">
+                        </div>
+                    </button>
                 </div>
                 <!-- Sidebar navigation links -->
                 <div class="sidebar-link" id="myCourses">My Courses</div>
                 <div class="sidebar-link" id="searchCourses">Search for Courses</div>
                 <div class="sidebar-link" id="createCourse">Create a Course</div>
+                <div class="sidebar-link" id="deleteCourse">Delete a Course</div>
+
             </div>
 
             <!-- Right Content Area -->
@@ -227,6 +228,13 @@
                             </form>
                         </div>
                     </div>
+
+                    <!-- Delete a Course Section -->
+                    <div class="delete" id="deleteCourseSection" style="display: none;">
+                        <div class="delete-course-container" style="text-align: center;">
+                            <!-- Content (table) for deleting courses will be dynamically generated -->
+                        </div>
+                    </div>                
 
                 </div>
             </div>
@@ -293,6 +301,54 @@
             document.getElementById('myCoursesContent').style.display = 'none'; 
             document.getElementById('welcomeSection').style.display = 'none';
         });
+
+        document.getElementById('logoButton').addEventListener('click', function() {
+            document.getElementById('welcomeSection').style.display = 'block';
+            document.getElementById('myCoursesContent').style.display = 'none';
+            document.getElementById('searchCoursesSection').style.display = 'none';
+            document.getElementById('createCourseSection').style.display = 'none';
+        });
+
+        document.getElementById('deleteCourse').addEventListener('click', function() {
+            document.getElementById('deleteCourseSection').style.display = 'block';
+            document.getElementById('myCoursesContent').style.display = 'none';
+            document.getElementById('searchCoursesSection').style.display = 'none';
+            document.getElementById('createCourseSection').style.display = 'none';
+            document.getElementById('welcomeSection').style.display = 'none';
+
+            // Call a function to load and display courses in a table here
+            loadAndDisplayCourses();
+        });
+        
+        // Event listener for 'Delete a course' link
+        function loadAndDisplayCourses() {
+            fetch('path_to_your_backend_endpoint')
+            .then(response => response.json())
+            .then(courses => {
+                let tableHtml = '<table>';
+                courses.forEach(course => {
+                    tableHtml += `
+                        <tr>
+                            <td>${course.name}</td>
+                            <td><button onclick="confirmDelete('${course.id}')">Delete</button></td>
+                        </tr>`;
+                });
+                tableHtml += '</table>';
+                document.querySelector('.delete-course-container').innerHTML = tableHtml;
+            });
+        }
+
+        function confirmDelete(courseId) {
+            if (confirm('Warning: Please Confirm to delete the course')) {
+                deleteCourse(courseId);
+            }
+        }
+
+        function deleteCourse(courseId) {
+            // Add your logic here to send a request to the backend to delete the course
+            // After deletion, reload the courses list
+            loadAndDisplayCourses();
+        } 
 
         // When the page loads
         document.addEventListener('DOMContentLoaded', function() {
