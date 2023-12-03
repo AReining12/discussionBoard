@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration</title>
+    <style>
+        
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('../asserts/images/landingpage_background.jpg'); 
+            background-size: cover;
+            background-position: center;
+            position: relative; 
+        }
+
+        .container_login {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 400px;
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+        }
+
+        .login-left, .login-right {
+            padding: 20px;
+        }
+
+        .login-left {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-left img {
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            object-position: center; 
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 250px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 270px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px; 
+        }
+
+        .footer-buttons a {
+            color: blue; 
+            text-decoration: underline; 
+            padding: 10px; 
+            display: inline-block; 
+            margin-top: 10px; 
+            margin-bottom: 10px; 
+            cursor: pointer; 
+            text-decoration: none; 
+        }
+
+        .footer-buttons a:hover {
+            color: darkblue; 
+        }
+
+        /* Student Register Part */
+
+        input[type="email"], input[type="password"] {
+            width: 250px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .jump-to-stuff a {
+            color: blue; 
+            text-decoration: underline; 
+            padding: 10px; 
+            display: inline-block; 
+            margin-top: 10px; 
+            cursor: pointer; 
+            text-decoration: none; 
+        }
+
+        .jump-to-stuff a:hover {
+            color: darkblue; 
+        }
+
+        .prompt-bar {
+            text-align: left; 
+            padding-left: 60px; 
+            font-size: 12px;
+        }
+   
+        .modal {
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 100px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            text-align: center;
+        } 
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Register Container -->
+    
+    <div class="container" id="register" style="display:block;">
+        <h2>Get started !</h2>
+        <form name="input" action="./cgi_bin/registrationhandler.php" method="post" autocomplete="on">
+    
+                <!-- Input field for first name -->
+                <label for="firstname">First Name</label><br>
+                <input type="text" id="register_firstname" name="register_firstname"><br>
+    
+                <!-- Input field for last name -->
+                <label for="lastname">Last Name</label><br>
+                <input type="text" id="register_lastname" name="register_lastname"><br>
+    
+                <!-- Input field for username -->
+                <label for="username">Username</label><br>
+                <input type="text" id="register_username" name="register_username"><br>
+    
+                <!-- Input field for email -->
+                <label for="email">E-mail</label><br>
+                <input type="email" id="register_email" name="register_email"><br>
+    
+                <!-- Input fields for password and password confirmation -->
+                <label for="password">Password</label><br>
+                <input type="password" id="register_password" name="register_password"><br>
+                <label for="password">Confirm Password</label><br>
+                <input type="password" id="register_password" name="register_password"><br>
+    
+                <!-- Buttons for submitting the registration form or returning to the login page -->
+                <input type="submit" name="register" value="Register">
+                <a href="../landingpage.html"><button type="button">Back to Login</button></a>
+            <div class="jump-to-stuff">
+                <a href="#" onclick="showStuff()">Not a student? Click here!</a>
+            </div>
+
+        </div>
+
+    <!-- Stuff Container -->
+
+    <!-- This section is for staff registration -->
+    <div class="container" id="stuff" style="display:none;">
+        <h2>Register as stuff !</h2>
+        
+        <!-- Dropdown to select the type of staff member -->
+        <select name="stuff_type">
+            <option value="Professor">Professor</option>
+            <option value="Lecturer">Lecturer</option>
+            <option value="Teaching Assistant">Teaching Assistant</option>
+            <option value="Team Mentor">Team Mentor</option>
+        </select>
+        <br>
+        <br>
+
+        <!-- Input field for first name -->
+        <label for="firstname">First Name</label><br>
+        <input type="text" id="firstname" name="firstname"><br>
+
+         <!-- Input field for last name -->
+        <label for="lastname">Last Name</label><br>
+        <input type="text" id="lastname" name="lastname"><br>
+
+        <!-- Input field for username -->
+        <label for="username">Username</label><br>
+        <input type="text" id="username" name="username"><br>
+
+        <!-- Input field for email -->
+        <label for="email">E-mail</label><br>
+        <input type="email" id="email" name="email"><br>
+
+        <!-- Input fields for password and password confirmation -->
+        <label for="password">Password</label><br>
+        <input type="password" id="password" name="password"><br>
+        <label for="password">Confirm Password</label><br>
+        <input type="password" id="password" name="password"><br>
+
+        <!-- Input fields for secure question and answer -->
+        <label for="secure-question">Secure Question</label><br>
+        <input type="text" id="secure-question" name="secure-question"><br>
+        <label for="secure-answer">Secure Answer</label><br>
+        <input type="text" id="secure-answer" name="secure-answer"><br>
+
+        <!-- Buttons for submitting the staff registration form or returning to the login page -->
+        <button type="submit">Register</button>
+        <a href="../landingpage.html"><button type="button">Back to Login</button></a>
+
+    </div>
+
+</body>
+
+    <script>
+
+        // This function shows the register section and hides other sections.
+        function showRegister() {
+            document.getElementById("register").style.display = "block";
+            document.getElementById("stuff").style.display = "none";
+        }
+        
+        // This function shows the stuff section and hides other sections.
+        function showStuff() {
+            document.getElementById("register").style.display = "none";
+            document.getElementById("stuff").style.display = "block";
+        }
+
+    </script>
+
+</html>
