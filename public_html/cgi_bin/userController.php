@@ -70,66 +70,6 @@
                 }
             }
 
-            // if the form is submitted
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                echo "here";
-                //var_dump($_POST); 
-
-                // check if field is set to determine login vs register switch
-                if (isset($_POST['action'])){
-                    echo "here1";
-                    $action = $_POST['action'];
-
-                    switch($action) {
-                        case 'register':
-                            echo "here2";
-                            // get data
-                            $username = $_POST['username'];
-                            $password = $_POST['password'];
-                            $firstname = $_POST['firstname'];
-                            $lastname = $_POST['lastname'];
-                            $email = $_POST['email'];
-
-                            // student is set to be student unless 'stuff_type' is defined
-                            if (isset($_POST['stuff_type'])) {
-                                // staff
-                                $groupid = $_POST['stuff_type'];
-                            } else {
-                                // student
-                                $groupid = 3;
-                            }
-
-                            // instance of UserController
-                            $userController = new userController();
-
-                            // Call registerUser()
-                            
-                            $userController->registerUser($username, $password, $firstname, $lastname, $email, $groupid);
-                            break;
-                   
-                        case 'login':
-                            echo "here3";
-
-                            // get data
-                            $username = $_POST['login_username'];
-                            $password = $_POST['login_password'];
-                            echo "$username";
-                            //echo "password";
-                            echo "$password";
-
-                            // instance of UserController
-                            $userController = new userController();
-
-                            // call loginUser()
-                            $userController->loginUser($username, $password);
-                            break;
-
-                        }
-                } else {
-                    echo "Error: No action specified";
-                }
-                
-            }
         ?>
 
     </body>
