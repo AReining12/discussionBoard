@@ -311,8 +311,15 @@ BEGIN
     RETURN 0;
 END //
 
-CREATE FUNCTION deleteBoard(board_id INT) RETURNS INT
+CREATE FUNCTION deleteBoard(user VARCHAR(64), board_id INT) RETURNS INT
 BEGIN
+    IF NOT EXISTS (
+        SELECT * FROM board_users
+        INNER JOIN users ON board_users.user_id=users.user_id
+        WHERE board_users.is_board_admin = 1 AND board_users.board_id=board_id AND users.user=user
+    ) THEN
+        RETURN 12;
+    END IF;
     DELETE messages FROM messages INNER JOIN channels
     ON channels.channel_id=messages.channel_id WHERE channels.board_id=board_id;
     DELETE channel_users FROM channel_users INNER JOIN channels
@@ -342,7 +349,8 @@ INSERT INTO errors (error_code, error_description) VALUES
 (8, "User is already a board member"),
 (9, "User already requested to join this board"),
 (10, "User did not request to join this board"),
-(11, "Cannot remove non board member");
+(11, "Cannot remove non board member"),
+(12, "Only admins can delete discussion boards");
 
 --
 -- Dumping testing data
