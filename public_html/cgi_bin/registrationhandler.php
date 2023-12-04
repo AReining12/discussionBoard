@@ -9,11 +9,11 @@
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // get data
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            $firstname = $_POST['firstname'];
-            $lastname = $_POST['lastname'];
-            $email = $_POST['email'];
+            $username = $_POST['register_username'];
+            $password = $_POST['register_password'];
+            $firstname = $_POST['register_firstname'];
+            $lastname = $_POST['register_lastname'];
+            $email = $_POST['register_email'];
 
             // student is set to be student unless 'stuff_type' is defined
             if (isset($_POST['stuff_type'])) {
