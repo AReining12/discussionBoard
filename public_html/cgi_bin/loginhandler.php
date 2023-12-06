@@ -1,4 +1,3 @@
-<!-- dont add html tags here, javascript will stop working -->
 <?php
 // Anna Reining, 260885420
 // User login listener
