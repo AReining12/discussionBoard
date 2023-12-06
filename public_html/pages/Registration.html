@@ -188,6 +188,9 @@
                 <input type="password" id="register_password" name="register_password"><br>
                 <label for="password">Confirm Password</label><br>
                 <input type="password" id="register_password" name="register_password"><br>
+
+                <!-- Hidden input field with a predetermined user type value -->
+                <input type="hidden" name="stuff_type" value="3">
     
                 <!-- Buttons for submitting the registration form or returning to the login page -->
                 <input type="submit" name="register" value="Register">
@@ -208,6 +211,8 @@
         
             <!-- Dropdown to select the type of staff member -->
             <select name="stuff_type">
+                <!--by user is considered a student by default-->
+                <option value="3" disabled selected>Select One</option>
                 <option value="1">Professor</option>
                 <option value="2">Lecturer</option>
                 <option value="4">Teaching Assistant</option>
@@ -218,25 +223,25 @@
 
             <!-- Input field for first name -->
             <label for="firstname">First Name</label><br>
-            <input type="text" id="register_firstname" name="register_firstname"><br>
+            <input type="text" id="register_staff_firstname" name="register_staff_firstname"><br>
 
             <!-- Input field for last name -->
             <label for="lastname">Last Name</label><br>
-            <input type="text" id="register_lastname" name="register_lastname"><br>
+            <input type="text" id="register_staff_lastname" name="register_staff_lastname"><br>
 
             <!-- Input field for username -->
             <label for="username">Username</label><br>
-            <input type="text" id="register_username" name="register_username"><br>
+            <input type="text" id="register_staff_username" name="register_staff_username"><br>
 
             <!-- Input field for email -->
             <label for="email">E-mail</label><br>
-            <input type="email" id="register_email" name="register_email"><br>
+            <input type="email" id="register_staff_email" name="register_staff_email"><br>
 
             <!-- Input fields for password and password confirmation -->
             <label for="password">Password</label><br>
-            <input type="password" id="register_password" name="register_password"><br>
+            <input type="password" id="register_staff_password" name="register_staff_password"><br>
             <label for="password">Confirm Password</label><br>
-            <input type="password" id="register_password" name="register_password"><br>
+            <input type="password" id="register_staff_password" name="register_staff_password"><br>
 
             <!-- Input fields for secure question and answer
             <label for="secure-question">Secure Question</label><br>
