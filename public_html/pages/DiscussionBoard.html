@@ -117,7 +117,7 @@
             height: 100px; 
         }
 
-        .manage-board-member, .manage-channels {
+        .manage-board-member, .manage-channels, .manage-channel-members {
             position: absolute;
             padding: 8px 12px;
             background-color: #007bff;
@@ -125,14 +125,19 @@
             cursor: pointer;
             border-radius: 4px;
         }
-
+        
         .manage-channels {
             top: 160px;
-            left: 430px; /* Position at lower-left corner */
+            left: 430px;  /*Position at lower-left corner */
         }
 
         .manage-board-member {
             top: 160px;
+            right: 430px; /* Position at lower-right corner */
+        }
+
+        .manage-channel-members {
+            bottom: 160px;
             right: 430px; /* Position at lower-right corner */
         }
 
@@ -232,8 +237,9 @@
                 welcomeTextDiv.className = 'welcome-text';
 
                 // Add welcome message and course name
+                // <h1>Discussion Board for ${courseName}</h1>
                 welcomeTextDiv.innerHTML = `
-                    <h1>Discussion Board for ${courseName}</h1>
+                <h1>Discussion Board for ${courseName}</h1>
                 `;
 
                 // Append the text container to the welcome section
@@ -255,9 +261,16 @@
                 manageChannelsButton.id = 'manageChannels';
                 manageChannelsButton.textContent = 'Manage Channels';
 
+                // Create Manage Channel Members button
+                const manageChannelMembersButton = document.createElement('div');
+                manageChannelMembersButton.className = 'manage-channel-members';
+                manageChannelMembersButton.id = 'manageChannelMembers';
+                manageChannelMembersButton.textContent = 'Manage Channel Members';
+
                 // Append buttons to the welcome section
                 welcomeSection.appendChild(manageBoardMemberButton);
                 welcomeSection.appendChild(manageChannelsButton);
+                welcomeSection.appendChild(manageChannelMembersButton); 
 
             }
 
