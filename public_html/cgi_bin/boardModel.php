@@ -133,7 +133,7 @@ class boardModel {
     }
 
     public function addChannel($boardID, $channelName){
-        // calls Mikes sql function createChannel
+        // adds channel to board
         include('db_connect.php');
 
         $stmt = $conn->prepare("SELECT createChannel(?, ?, ?)");
@@ -198,6 +198,36 @@ class boardModel {
         }
 
         
+    }
+    public function deleteChannel($boardID, $channelName){
+        // verify that user is admin
+        $userModel = new userModel();
+
+        $result = $userModel->verifyAdmin($boardID);
+
+        if ($result){
+            // verify that channel exists
+            include('db_connect.php');
+
+            $channelID = $this->getChannelIDFromName($channelName);
+
+            $stmt = $conn->prepare("SELECT deleteChannel(?)");
+
+            // Bind parameters
+            $stmt->bind_param("i", $channelID);
+
+            if (!$stmt->execute()) {
+                // Log or handle the error
+                echo "Error: " . $stmt->error;
+            }
+
+            $stmt->close();
+            $conn->close();
+
+
+        }
+
+
     }
 
     public function addChannelUser($boardID, $channelName, $userID){
@@ -300,6 +330,25 @@ class boardModel {
         $query = "%$query%";
         // Bind parameters
         $stmt->bind_param("s", $query);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $conn->close();
+        return $rows;
+    }
+
+    public function getChannels($boardID){
+        include('db_connect.php');
+        // SQL statement
+        $stmt = $conn->prepare("SELECT * FROM channels WHERE board_id = ?");
+
+        // Bind parameters
+        $stmt->bind_param("i", $boardID);
 
         // Execute the query
         $stmt->execute();

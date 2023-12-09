@@ -16,6 +16,9 @@
     manageChannels($boardID, $action, $channelName):
     - manages channels in a discussion board
 
+    createChannel($channelName):
+    - creates a new channel
+
     manageChannelUsers($boardID, $action, $username, $channelName):
     - manages users of a specific channel
 
@@ -98,11 +101,33 @@ class boardController {
     }
 
     public function getChannels($boardID){
-        $userModel = new userModel();
-        $channels = $userModel->getChannels($boardID);
+        $boardModel = new boardModel();
+        $channels = $boardModel->getChannels($boardID);
 
-        //return $channels;
-        return true;
+        return $channels;
+        // return true;
+    }
+
+    public function createChannel($boardID, $channelName){
+        $boardModel = new boardModel();
+        $boardModel->addChannel($boardID, $channelName);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
+
+        // Perform the redirect
+        header("Location: " . $redirectUrl);
+        exit; // Ensure that no further code is executed after the redirect
+    }
+
+    public function deleteChannel($boardID, $channelName){
+        $boardModel = new boardModel();
+        $boardModel->deleteChannel($boardID, $channelName);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
+
+        // Perform the redirect
+        header("Location: " . $redirectUrl);
+        exit; // Ensure that no further code is executed after the redirect
     }
 
 }
@@ -187,6 +212,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $boardController = new boardController();
                 $boardController->manageChannelUsers($boardID, $action, $username, $channelName);
                 break;
+
+            case 'create_channels':
+                // get board id
+                $boardName = $_SESSION['boardname'];
+
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+
+                // get channelName
+                $channelName = $_POST['name'];
+
+                $boardController = new boardController();
+                $boardController->createChannel($boardID, $channelName);
+                break;
+
+            case 'remove_channels':
+                // get board id
+                $boardName = $_SESSION['boardname'];
+
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+
+                // get channelName
+                $channelName = $_POST['name'];
+
+                $boardController = new boardController();
+                $boardController->deleteChannel($boardID, $channelName);
+
+
         }
     } else if ($ajax) {
         $request = json_decode($ajax);
