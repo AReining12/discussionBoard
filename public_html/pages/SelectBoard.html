@@ -261,6 +261,7 @@
             }
         }
         init()
+
         function createCourse(event) {
             event.preventDefault()
             let data = new FormData(event.target)
@@ -275,7 +276,8 @@
                                 highest = Math.max(row.board_id, highest);
                             }
                         })
-                    window.location.href = "./DiscussionBoard.html?course=" + highest
+                        alert('Board created successfully. You are the admin of this board.')
+                        window.location.href = "./DiscussionBoard.html?course=" + highest
                     })
                 }
             })
