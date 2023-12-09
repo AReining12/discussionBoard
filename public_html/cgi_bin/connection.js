@@ -85,6 +85,16 @@ class Connection {
         return data.status
     }
 
+    async setBoard(id) {
+        enforceTypes(id, "number")
+        let data = await Connection.ajax("../cgi_bin/boardController.php", {action: "set_board", board_id: id})
+        enforceTypes(data, "object", data.success, "boolean", data.message, "string")
+        if (!data.success) {
+            throw new Error(data.message)
+        }
+        return data.message
+    }
+
     static async connect() {
         let data = await Connection.ajax("../cgi_bin/loginhandler.php", {action: "authenicate"})
         enforceTypes(data, "object", data.success, "boolean")

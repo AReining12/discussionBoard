@@ -16,8 +16,15 @@
     manageChannels($boardID, $action, $channelName):
     - manages channels in a discussion board
 
+    manageChannelUsers($boardID, $action, $username, $channelName):
+    - manages users of a specific channel
+
     searchMessages($boardID, $searchTerm):
     - processes message search
+
+    getChannels($boardID):
+    - returns a list of channels in the board
+
     
 */
 error_reporting(E_ALL);
@@ -52,7 +59,7 @@ class boardController {
             $boardModel = new boardModel();
             $boardModel->removeMember($boardID, $userID);
         }
-        header("Location: discussion_board.php");
+        header("Location: ../pages/DiscussionBoard.html");
         exit();
     }
 
@@ -88,6 +95,14 @@ class boardController {
         }
         header("Location: discussion_board.php");
         exit();
+    }
+
+    public function getChannels($boardID){
+        $userModel = new userModel();
+        $channels = $userModel->getChannels($boardID);
+
+        //return $channels;
+        return true;
     }
 
 }
@@ -212,6 +227,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $boardController = new boardController();
                 $status = $boardController->deleteBoard($_SESSION['username'], $request->board_id);
                 echo json_encode(['success'=>true, 'status'=>$status]);
+                break;
+
+            case 'set_board':
+                if (isset($request->board_id) && isset($_SESSION['username'])) {
+                    $boardModel = new boardModel();
+                    $boards = $boardModel->getUserBoards($_SESSION['username']);
+                    $found = false;
+                    foreach ($boards as $board) {
+                        if ($board['board_id'] === $request->board_id) {
+                            $boardID = $board['board_id'];
+                            $_SESSION['boardname'] = $board['board_name'];
+                            $_SESSION['boardID'] = $board['board_id'];
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if ($found) {
+                        echo json_encode(['success' => true, 'message' => 'Board set successfully']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'User is in no such board']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Illegal arguments']);
+                }
                 break;
             
             default:

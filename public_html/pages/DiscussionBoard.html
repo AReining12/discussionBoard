@@ -272,6 +272,31 @@
                 welcomeSection.appendChild(manageChannelsButton);
                 welcomeSection.appendChild(manageChannelMembersButton); 
 
+                //  Event listeners for buttons:
+                document.getElementById('manageBoardMember').addEventListener('click', function() {
+                    try {
+                        window.location.href = '../cgi_bin/manageMembers.php';
+                    } catch (error) {
+                        console.error('Error navigating to manageMembers.php:', error);
+                    }
+                });
+
+                document.getElementById('manageChannels').addEventListener('click', function() {
+                    try {
+                        window.location.href = '../cgi_bin/manageChannels.php';
+                    } catch (error) {
+                        console.error('Error navigating to manageChannels.php:', error);
+                    }
+                });
+
+                document.getElementById('manageChannelMembers').addEventListener('click', function() {
+                    try {
+                        window.location.href = '../cgi_bin/manageChannelMembers.php';
+                    } catch (error) {
+                        console.error('Error navigating to manageChannelMembers.php:', error);
+                    }
+                });
+
             }
 
         }

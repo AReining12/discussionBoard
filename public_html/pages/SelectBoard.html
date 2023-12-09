@@ -241,7 +241,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Scripts for functionality -->
     <script src="../cgi_bin/bootstrap/jquery.min.js"></script>
     <script src="../cgi_bin/bootstrap/popper.min.js"></script>
@@ -292,7 +292,7 @@
                 courses.forEach((course, index) => {
                     row += `
                     <div class="col-md-4">
-                        <a href="DiscussionBoard.html?course=${encodeURIComponent(course.board_id)}" class="course-card-link">
+                        <a href="DiscussionBoard.html?course=${encodeURIComponent(course.board_id)}" class="course-card-link" data-boardid="${course.board_id}">
                             <div class="course-card">
                                 <h5>${course.board_name}</h5> 
                                 <p>Section: ${course.board_id}</p> 
@@ -308,6 +308,7 @@
 
                 row += '</div>';
                 resultContent.innerHTML = row;
+                addBoardListener()
             })
 
             .catch(error => console.error('Error:', error));
@@ -353,7 +354,7 @@
                 courses.forEach((course, index) => {
                     row += `
                     <div class="col-md-4">
-                        <a href="DiscussionBoard.html?course=${encodeURIComponent(course.board_id)}" class="course-card-link">
+                        <a href="DiscussionBoard.html?course=${encodeURIComponent(course.board_id)}" class="course-card-link" data-boardid="${course.board_id}">
                             <div class="course-card">
                                 <h5>${course.board_name}</h5> 
                                 <p>Section: ${course.board_id}</p> 
@@ -369,6 +370,7 @@
 
                 row += '</div>';
                 myCoursesContent.innerHTML = row;
+                addBoardListener()
             })
 
             .catch(error => console.error('Error:', error));
@@ -415,6 +417,25 @@
             // Call a function to load and display courses in a table here
             loadAndDisplayCourses();
         });
+
+        function addBoardListener() {
+            // Add event listener to each course link
+            document.querySelectorAll('.course-card-link').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const boardID = this.getAttribute('data-boardid');
+                    setBoard(parseInt(boardID));
+                });
+            });
+        }
+
+        // sets session variables for course selection
+        function setBoard(boardID) {
+            connection.setBoard(boardID).then(result => {
+                console.log(result)
+                window.location.href = `DiscussionBoard.html?course=${encodeURIComponent(boardID)}`;
+            })
+        }
         
         // Event listener for 'Delete a course' link
         function loadAndDisplayCourses() {
