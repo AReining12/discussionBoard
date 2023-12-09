@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Discussion Board</title>
-    <style>
-        #logoutButton {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-        /* Additional styles for the form and the page */
-    </style>
-</head>
-<body>
-    <h1>Create a New Discussion Board</h1>
-
-    <?php
+<?php
     session_start();
     include 'db_connect.php'; // Include the database connection
 
@@ -22,7 +6,7 @@
         $userId = $_SESSION['user_id']; // Assuming the user's ID is stored in the session
 
         // Check if the user is a staff member
-        $staffCheck = $conn->prepare("SELECT is_staff FROM groups JOIN users ON groups.group_id = users.group_id WHERE users.user_id = ?");
+        $staffCheck = $conn->prepare("SELECT groups.is_staff FROM groups JOIN users ON groups.group_id = users.group_id WHERE users.user_id = ?");
         $staffCheck->bind_param("i", $userId);
         $staffCheck->execute();
         $staffResult = $staffCheck->get_result();
@@ -34,40 +18,55 @@
 
         if ($isStaff) {
             // Staff member logic
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                $boardName = $_POST['boardName'];
+            if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['courseName'])) {
+                $courseName = $_POST['courseName'];
 
-                // Begin transaction
-                $conn->begin_transaction();
+                // Ensure that the course name is not empty
+                if (!empty($courseName)) {
+                    // Begin transaction
+                    $conn->begin_transaction();
 
-                try {
-                    // Insert new board
-                    $stmt = $conn->prepare("INSERT INTO boards (board_name) VALUES (?)");
-                    $stmt->bind_param("s", $boardName);
-                    $stmt->execute();
-                    $boardId = $conn->insert_id; // Get the id of the newly created board
+                    try {
+                        // Insert new board
+                        $stmt = $conn->prepare("INSERT INTO boards (board_name) VALUES (?)");
+                        $stmt->bind_param("s", $courseName);
+                        $stmt->execute();
+                        $boardId = $conn->insert_id; // Get the id of the newly created board
 
-                    // Set the current user as the admin of the new board
-                    $isAdmin = true;
-                    $adminStmt = $conn->prepare("INSERT INTO board_users (user_id, board_id, is_board_admin) VALUES (?, ?, ?)");
-                    $adminStmt->bind_param("iii", $userId, $boardId, $isAdmin);
-                    $adminStmt->execute();
+                        // Set the current user as the admin of the new board
+                        $isAdmin = 1; // Assuming 'is_board_admin' is a boolean represented as an integer
+                        $adminStmt = $conn->prepare("INSERT INTO board_users (user_id, board_id, is_board_admin) VALUES (?, ?, ?)");
+                        $adminStmt->bind_param("iii", $userId, $boardId, $isAdmin);
+                        $adminStmt->execute();
 
-                    // Commit transaction
-                    $conn->commit();
+                        // Commit transaction
+                        $conn->commit();
 
-                    echo "Board created successfully. You are the admin of this board.";
-                } catch (Exception $e) {
-                    // Rollback transaction on error
-                    $conn->rollback();
-                    echo "Error creating board: " . $e->getMessage();
+                        // Using JavaScript to show an alert and redirect
+                        echo "<script>
+                                alert('Board created successfully. You are the admin of this board.');
+                                window.location.href = '../pages/SelectBoard.html#myCourses'; // Replace with the path to your SelectBoard.html page
+                              </script>";
+                    } catch (Exception $e) {
+                        // Rollback transaction on error
+                        $conn->rollback();
+                        echo "Error creating board: " . $e->getMessage();
+                    }
+
+                    // Close the prepared statements if they have been set
+                    if (isset($stmt)) {
+                        $stmt->close();
+                    }
+                    if (isset($adminStmt)) {
+                        $adminStmt->close();
+                    }
+                } else {
+                    echo "Board name is required.";
                 }
-                
-                $stmt->close();
-                $adminStmt->close();
             } else {
+                // Form display logic
                 echo '<form action="" method="post">
-                        Board Name: <input type="text" name="boardName"><br>
+                        Board Name: <input type="text" name="courseName"><br>
                         <input type="submit" value="Create Board">
                       </form>';
             }
@@ -79,17 +78,4 @@
     }
 
     $conn->close();
-    ?>
-
-    <button id="logoutButton" onclick="logout()">Logout</button>
-
-    <script>
-        function logout() {
-            var confirmation = confirm("Are you sure to logout?");
-            if (confirmation) {
-                window.location.href = 'logout.php'; // Redirect to logout.php
-            }
-        }
-    </script>
-</body>
-</html>
+?>
