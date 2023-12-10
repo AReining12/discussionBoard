@@ -329,6 +329,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
 
 
+            case 'remove_member_from_channel':
+                // removeChannelMember($boardID, $username, $channelName)
+
+                // get board id
+                $boardName = $_SESSION['boardname'];
+
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+                // get channelName
+                $channelName = $_POST['channel_name'];
+
+                // get user name
+                $username = $_POST['user_name'];
+
+                $boardController = new boardController();
+                $boardController->removeChannelMember($boardID, $username, $channelName);
+                break;
 
             case 'create_channels':
                 // get board id
@@ -358,8 +376,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $boardController = new boardController();
                 $boardController->deleteChannel($boardID, $channelName);
+                break;
 
 
+                
         }
     } else if ($ajax) {
         $request = json_decode($ajax);

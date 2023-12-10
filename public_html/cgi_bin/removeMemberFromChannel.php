@@ -8,7 +8,7 @@
         <!-- Form to add or remove channels -->
         <form name="removeMembersForm" action="removeMemberFromChannel2.php" method="post" autocomplete="on">
             <!--Hidden field to determine whether form is register or login-->
-            <input type="hidden" name="action" value="remove_members">
+            <input type="hidden" name="action" value="remove_channel_member">
             <!-- Aligned text boxes-->
             <fieldset>
                 <b id="name">Which user would you like to remove from a channel?</b>
@@ -50,7 +50,7 @@
             </fieldset>
 
             <!-- Submit section -->
-            <input type="submit" name="remove_members" value="Remove">
+            <input type="submit" name="remove_channel_member" value="Next">
         </form>
 
     </body>

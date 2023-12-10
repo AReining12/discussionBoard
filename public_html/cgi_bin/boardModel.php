@@ -132,6 +132,24 @@ class boardModel {
         return $channelID;
     }
 
+    public function getChannelNameFromID($channelID){
+        include('db_connect.php');
+
+        $stmt = $conn->prepare("SELECT * FROM channels WHERE channel_id = ?");
+
+        $stmt->bind_param("i", $channelID);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        $row = $result->fetch_assoc();
+
+        $channelname = $row['channel_name'];
+
+        return $channelname;
+    }
+
     public function addChannel($boardID, $channelName){
         // adds channel to board
         include('db_connect.php');
@@ -254,7 +272,7 @@ class boardModel {
             // Store the result
             $result = $stmt->get_result();
 
-            if ($result->get_rows == 0){
+            if ($result->num_rows == 0){
                 $sql = $conn->prepare("INSERT INTO `channel_users` (`user_id`, `channel_id`) VALUES ('{$userID}', '{$channelID}')");
                 $sql->execute();
                 $stmt->close();
@@ -275,7 +293,7 @@ class boardModel {
         
         if ($isAdmin){
             // get channel id
-            $channelID = $this->getChannelIDFromName($channelname);
+            $channelID = $this->getChannelIDFromName($channelName);
 
             // check if in channel_users alread
             
@@ -291,7 +309,7 @@ class boardModel {
             // Store the result
             $result = $stmt->get_result();
 
-            if ($result->get_rows > 0){
+            if ($result->num_rows > 0){
                 $sql = $conn->prepare("DELETE FROM channel_users WHERE user_id = ? AND channel_id = ?");
                 $sql->bind_param("ii", $userID, $channelID);
                 $sql->execute();
@@ -349,6 +367,25 @@ class boardModel {
 
         // Bind parameters
         $stmt->bind_param("i", $boardID);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $conn->close();
+        return $rows;
+    }
+
+    public function getUserChannels($boardID, $userID){
+        include('db_connect.php');
+        // SQL statement
+        $stmt = $conn->prepare("SELECT * FROM channel_users WHERE user_id = ?");
+
+        // Bind parameters
+        $stmt->bind_param("i", $userID);
 
         // Execute the query
         $stmt->execute();
