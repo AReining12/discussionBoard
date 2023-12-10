@@ -417,12 +417,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     }
                     if ($found) {
-                        echo json_encode(['success' => true, 'message' => 'Board set successfully']);
+                        echo json_encode(['success' => true, 'status' => 0, 'message' => 'Board set successfully']);
                     } else {
-                        echo json_encode(['success' => false, 'message' => 'User is in no such board']);
+                        echo json_encode(['success' => false, 'status' => 1, 'message' => 'User is in no such board']);
                     }
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'Illegal arguments']);
+                    echo json_encode(['success' => false, 'status' => 2, 'message' => 'Illegal arguments']);
                 }
                 break;
             
