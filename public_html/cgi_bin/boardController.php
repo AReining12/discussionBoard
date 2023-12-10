@@ -66,6 +66,40 @@ class boardController {
         exit();
     }
 
+    public function addMember($boardID, $username){
+        $userModel = new userModel();
+
+
+        // Get userID from username
+        $userID = $userModel->getUserID($username);
+
+        $boardModel = new boardModel();
+        $boardModel->addMember($boardID, $userID);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
+
+        // Redirect
+        header("Location: " . $redirectUrl);
+        exit;
+    }
+
+    public function removeMember($boardID, $username){
+        $userModel = new userModel();
+
+
+        // Get userID from username
+        $userID = $userModel->getUserID($username);
+
+        $boardModel = new boardModel();
+        $boardModel->removeMember($boardID, $userID);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
+
+        // Redirect
+        header("Location: " . $redirectUrl);
+        exit;
+    }
+
     public function manageChannels($boardID, $action, $channelName){
         if ($action == 'addChannel'){
             // call addChannel
@@ -100,6 +134,39 @@ class boardController {
         exit();
     }
 
+    public function addChannelMember($boardID, $username, $channelName){
+        // get user id
+        $userModel = new userModel();
+        $userID = $userModel->getUserID($username);
+
+        // call addChannelUser($boardID, $channelName, $userID)
+        $boardModel = new boardModel();
+        $boardModel->addChannelUser($boardID, $channelName, $userID);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
+
+        // Redirect
+        header("Location: " . $redirectUrl);
+        exit;
+    }
+
+    public function removeChannelMember($boardID, $username, $channelName){
+         // get user id
+         $userModel = new userModel();
+         $userID = $userModel->getUserID($username);
+ 
+         // call removeChannelUser($boardID, $channelName, $userID)
+         $boardModel = new boardModel();
+         $boardModel->removeChannelUser($boardID, $channelName, $userID);
+ 
+         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
+ 
+         // Redirect
+         header("Location: " . $redirectUrl);
+         exit;
+    }
+
+
     public function getChannels($boardID){
         $boardModel = new boardModel();
         $channels = $boardModel->getChannels($boardID);
@@ -114,9 +181,9 @@ class boardController {
 
         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
 
-        // Perform the redirect
+        // Redirect
         header("Location: " . $redirectUrl);
-        exit; // Ensure that no further code is executed after the redirect
+        exit; 
     }
 
     public function deleteChannel($boardID, $channelName){
@@ -125,9 +192,9 @@ class boardController {
 
         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
 
-        // Perform the redirect
+        // Redirect
         header("Location: " . $redirectUrl);
-        exit; // Ensure that no further code is executed after the redirect
+        exit; 
     }
 
 }
@@ -171,6 +238,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit();
                 }
                 break;
+            case 'add_members':
+                $boardName = $_SESSION['boardname'];
+
+                //TODO: determine what inputs I will get (board name vs board id)
+                // get board id (session variable boardname)
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+                // get username
+                $username = $_POST['name'];
+
+                $boardController = new boardController();
+                $boardController->addMember($boardID, $username);
+
+                break;
+
+            case 'remove_members':
+                $boardName = $_SESSION['boardname'];
+
+                //TODO: determine what inputs I will get (board name vs board id)
+                // get board id (session variable boardname)
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+                // get username
+                $username = $_POST['name'];
+
+                $boardController = new boardController();
+                $boardController->removeMember($boardID, $username);
+                
+                break;
+
             case 'manage_channels':
                 // get board ID
                 $boardName = $_SESSION['boardname'];
@@ -212,6 +311,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $boardController = new boardController();
                 $boardController->manageChannelUsers($boardID, $action, $username, $channelName);
                 break;
+
+            case 'add_member_to_channel':
+                $boardName = $_SESSION['boardname'];
+
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+                // get username
+                $username = $_POST['name'];
+
+                // get channelName
+                $channelName = $_POST['channel_name'];
+
+                $boardController = new boardController();
+                $boardController->addChannelMember($boardID, $username, $channelName);
+                break;
+
+
 
             case 'create_channels':
                 // get board id
