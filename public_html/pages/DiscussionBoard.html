@@ -196,6 +196,17 @@
         cursor: pointer;
         }
 
+        .channel {
+            font-size: 0.8em;
+            padding: 0.2em 0.5em;
+            border-radius: 1em;
+        }
+
+        .time {
+            font-size: 0.8em;
+            color: darkgray;
+        }
+
     </style>
 
 </head>
@@ -244,35 +255,6 @@
     <script src="../cgi_bin/connection.js"></script>
 
     <script>
-        let connection = null
-        async function init(){
-            try {
-                connection = await Connection.connect()
-                let boards = await connection.getBoards()
-                let id = parseInt(getUrlParameter('course'))
-                let found = false
-                let name = ""
-                boards.forEach(row => {
-                    if (row.board_id == id) {
-                        found = true
-                        name = row.board_name
-                    }
-                })
-                handleCourseSpecificLogic(found, name)
-                if (found) {
-                    posts = await connection.getAllMessages(id)
-                } else {
-                    posts = []
-                }
-                displayPosts()
-            } catch (error) {
-                if (error instanceof TypeError) {
-                    throw error
-                }
-                window.location.replace("../landingpage.html")
-            }
-        }
-
         // Dummy data for posts (used for demonstration purposes)
         let posts = [
             // { title: "Post 1", content: "Content for Post 1" },
@@ -284,6 +266,82 @@
             // Add more post data as needed
         ];
 
+        let connection = null
+        async function init(){
+            try {
+                connection = await Connection.connect()
+                let user_boards = await connection.getBoards()
+                let id = parseInt(getUrlParameter('course'))
+                let found = false
+                let exists = false
+                let name = ""
+                user_boards.forEach(row => {
+                    if (row.board_id == id) {
+                        found = true
+                        exists = true
+                        name = row.board_name
+                    }
+                })
+                if (!found) {
+                    let all_boards = await connection.searchBoards("")
+                    all_boards.forEach(row => {
+                        if (row.board_id == id) {
+                            exists = true
+                            name = row.board_name
+                        }
+                    })
+                }
+                handleCourseSpecificLogic(found, exists, name)
+                if (found) {
+                    let result = await connection.setBoard(id)
+                    if (!result.success) {
+                        throw new Error("Server refused to set board")
+                    }
+                    posts = await connection.getBoardMessages()
+                } else {
+                    posts = []
+                }
+                displayPosts()
+                return found
+            } catch (error) {
+                if (error instanceof TypeError) {
+                    throw error
+                }
+                window.location.replace("../landingpage.html")
+            }
+        }
+
+        function legibleTime(time) {
+            let returnTime = 0;
+            let returnString = ""
+            if (time / 1000 < 1) {
+                returnTime = Math.floor(time)
+                returnString = " millisecond";
+            } else if (time / (60*1000) < 1) {
+                returnTime = Math.floor(time / 1000)
+                returnString = " second"
+            } else if (time / (60*60*1000) < 1) {
+                returnTime = Math.floor(time / (60*1000))
+                returnString = " minute"
+            } else if (time / (24*60*60*1000) < 1) {
+                returnTime = Math.floor(time / (60*60*1000))
+                returnString = " hour"
+            } else if (time / (7*24*60*60*1000) < 1) {
+                returnTime = Math.floor(time / (24*60*60*1000))
+                returnString = " day"
+            } else if (time / (30*24*60*60*1000) < 1) {
+                returnTime = Math.floor(time / (7*24*60*60*1000))
+                returnString = " week"
+            } else if (time / (365*24*60*60*1000) < 1) {
+                returnTime = Math.floor(time / (30*24*60*60*1000))
+                returnString = " month"
+            } else {
+                returnTime = Math.floor(time / (365*24*60*60*1000))
+                returnString = " year"
+            }
+            return returnTime + returnString + (returnTime > 1 ? "s" : "")
+        }
+
         // Function to extract URL parameters (e.g., 'course' from the query string)
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -293,7 +351,7 @@
         }
         
         // Logic specific to handling course-related features
-        function handleCourseSpecificLogic(isValidUser, courseName) {
+        function handleCourseSpecificLogic(isValidUser, boardExists, courseName) {
             // Create a new element for the welcome section
             const welcomeSection = document.createElement('div');
             welcomeSection.id = 'welcomeSection';
@@ -320,6 +378,11 @@
             // Add the welcome section to the content area
             const contentArea = document.getElementById('contentArea');
             contentArea.prepend(welcomeSection);
+
+            if (!boardExists) {
+                welcomeTextDiv.innerHTML = "<h1>Board not found</h1>"
+                return
+            }
 
             if (!isValidUser) {
                 welcomeTextDiv.innerHTML = "<h3>You must be a member of this board to view the content</h3><div id='join' style='width:100%'>Request to join</div>"
@@ -398,24 +461,26 @@
         
         // Display make a post page
         document.addEventListener('DOMContentLoaded', function() {
-            init()
+            init().then(result => {
+                if (result) {
+                    // Event listener for 'Make a Post'
+                    document.getElementById('makepost').addEventListener('click', function() {
+                        
+                        // Hide welcome section
+                        if (welcomeSection) {
+                            welcomeSection.style.display = 'none';
+                        }
 
-            // Event listener for 'Make a Post'
-            document.getElementById('makepost').addEventListener('click', function() {
-                
-                // Hide welcome section
-                if (welcomeSection) {
-                    welcomeSection.style.display = 'none';
+                        // Clear the previously displayed post content
+                        const postDisplayArea = document.getElementById('postDisplayArea');
+                        postDisplayArea.innerHTML = '';
+
+                        // Display the 'Make a Post' form section
+                        const makepostSection = document.getElementById('makepostSection');
+                        makepostSection.style.display = 'block';
+                    });
                 }
-
-                // Clear the previously displayed post content
-                const postDisplayArea = document.getElementById('postDisplayArea');
-                postDisplayArea.innerHTML = '';
-
-                // Display the 'Make a Post' form section
-                const makepostSection = document.getElementById('makepostSection');
-                makepostSection.style.display = 'block';
-            });
+            })
         });
     
         // Function to display posts in the sidebar
@@ -426,7 +491,7 @@
             filteredPosts.forEach(post => {
                 const postElement = document.createElement('div');
                 postElement.classList.add('sidebar-link');
-                postElement.textContent = post.title;
+                postElement.textContent = post.message_title //post.title;
                 postElement.onclick = () => displayPostContent(post);
                 postList.appendChild(postElement);
             });
@@ -436,7 +501,8 @@
         // Function to display post content
         function displayPostContent(post) {
             const contentArea = document.getElementById('postDisplayArea');
-            const postContent = `<h3>${post.title}</h3><p>${post.content}</p>`;
+//            const postContent = `<h3>${post.title}</h3><p>${post.content}</p>`;
+            const postContent = `<h3>${post.message_title} <span class='channel' style='background-color: hsl(` + ((post.channel_id*130)%360) + `,100%,75%)'>${post.channel_name}</span></h3><h4>${post.author} <span class="time">` + legibleTime(new Date() - new Date(post.message_time)) + ` ago</span></h4><p>${post.message_text}</p>`;
             
             // Add a textarea for comments
             const commentSection = `

@@ -445,7 +445,6 @@
         // sets session variables for course selection
         function setBoard(boardID) {
             connection.setBoard(boardID).then(result => {
-                console.log(result.message)
                 if (result.status != 2) {
                     window.location.href = `DiscussionBoard.html?course=${encodeURIComponent(boardID)}`;
                 }

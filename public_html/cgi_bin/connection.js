@@ -92,9 +92,13 @@ class Connection {
         return data
     }
 
-    async getAllMessages(board_id) {
-        enforceTypes(board_id, "number")
-        return [{title: "Hello world", content: "Lorem ipsum dolor sit amet"}]
+    async getBoardMessages() {
+        let data = await Connection.ajax("../cgi_bin/messageController.php", {action: "get_messages"})
+        enforceTypes(data, "object", data.success, "boolean", data.message, "string", data.data, "object")
+        if (!data.success) {
+            throw new Error(data.message)
+        }
+        return Object.values(data.data)
     }
 
     static async connect() {
