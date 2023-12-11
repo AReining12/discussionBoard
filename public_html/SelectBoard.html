@@ -1,0 +1,537 @@
+<!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McChat Discussion System</title>
+
+    <link href="../cgi_bin/bootstrap/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        
+        /* Sidebar styling */
+        .sidebar {
+            flex: 0 0 200px; 
+            min-height: 100vh; 
+            background-color: #f8f9fa; 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Style for each link in the sidebar */
+        .sidebar-link {
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        /* Hover effect for sidebar links */
+        .sidebar-link:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Sidebar header styling */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            justify-content: center; 
+        }
+        
+        /* Logo within the sidebar */
+        .sidebar-header .logo {
+            /* flex: 1; */
+            height: 35px;
+            width: 150px;
+        }
+        
+        /* Main content area styling */
+        .content-area {
+            padding: 20px; 
+            min-height: 100vh; 
+        }
+
+        /* Ensure the main container is a flex container */
+        .container-fluid {
+            display: flex;
+            min-height: 100vh; /* Full viewport height */
+        }
+
+         /* Adjust row to work inside a flex container */
+        .row {
+            display: flex;
+            flex-grow: 1; /* Allow row to grow and fill space */
+        }
+
+        .welcome {
+            min-height: 95vh; /* Full viewport height */
+            background-image: url('../asserts/images/welcome.jpg');
+            background-size: cover; 
+            position: relative; /* 使绝对定位的子元素（如 .logout）相对于此元素定位 */
+        }
+
+        .welcome-text{
+            font-weight: bold; 
+            text-align: center; 
+            color: white; 
+            position: absolute;
+            display: flex;       /* 启用 flexbox */
+            justify-content: space-between; /* 在项目之间平均分配可用空间 */
+            align-items: center; /* 垂直居中对齐 */
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .logout {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 10px; /* 根据需要调整边距 */
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: white; /* 可选：添加背景色以增加可见度 */
+            z-index: 100; /* 确保按钮位于其他元素之上 */
+        }
+
+        
+        /* Course card styling */
+        .course-card {
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .search {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .create {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Search container styling */
+        .search-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Search header with flexbox for alignment */
+        .search-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-header h2 {
+            margin-right: 10px;
+        }
+
+        /* Search box styling */
+        .search-box {
+            width: 50%;
+            padding: 10px;
+            margin: 10px auto; 
+        }
+
+        /* Search button styling */
+        .search-button {
+            margin-top: 10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<!-- Logout button -->
+<a href="../cgi_bin/logout.php" class="logout">Log Out</a>
+
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Left Sidebar -->
+            <div class="col-md-2 sidebar">
+                <div class="sidebar-header">
+                    <!-- Click mcgill logo to show welcome page and log out-->
+                    <button id="logoButton" style="background:none;border:none;padding:0;">
+                        <div class="logo">
+                            <img src="../asserts/images/logo.png" alt="Logo" class="img-fluid">
+                        </div>
+                    </button>
+                </div>
+                <!-- Sidebar navigation links -->
+                <div class="sidebar-link" id="myCourses">My Courses</div>
+                <div class="sidebar-link" id="searchCourses">Search for Courses</div>
+                <div class="sidebar-link" id="createCourse">Create a Course</div>
+                <div class="sidebar-link" id="deleteCourse">Delete a Course</div>
+
+            </div>
+
+
+            <!-- Right Content Area -->
+            <div class="col-md-10">
+                <div class="content-area" id="contentArea">
+                    
+                    <!-- Welcome Section -->
+                    <div class="welcome" id="welcomeSection" style="display: block;">
+                      
+                        <div class="welcome-text">
+                            <h1>Welcome to McChat System!</h1>
+                        </div>
+                    </div>
+
+                    <!-- My Courses Content -->
+                    <div id="myCoursesContent" style="display: none;"></div>
+
+                    <!-- Search for Courses Section -->
+                    <div class="search" id="searchCoursesSection" style="display: none;">
+                        <div class="search-container">
+                            <div class="search-header">
+                                <!-- Header for the search section -->
+                                <h2>Search for discussion board</h2>
+                                <img src="../asserts/images/search-icon.jpg" alt="Search Icon"/>
+                            </div>
+                            <!-- Search input box -->
+                            <input type="text" class="search-box" placeholder="Search courses..."><br><br>
+                            <!-- Search button -->
+                            <button class="btn btn-primary search-button">Search</button>
+                        </div>
+                        <div id="searchResults"></div>
+                    </div>
+
+                    <!-- Create a Course Section -->
+                    <div class="create" id="createCourseSection" style="display: none;">
+                        <div class="create-course-container" style="text-align: center;">
+                            <!-- Course Creation Form -->
+                            <form onsubmit="createCourse(event)" method="POST">
+                                <!-- Input fields for course creation -->
+                                <label id="labelFirstName">Course Name :</label> <input type="text"  name="courseName"><br><br>
+                                <label id="labelLastName">Course Section :</label> <input type="text" name="courseSection"><br><br>
+                                <label id="labelEmail">Semester :</label> <input type="text" name="semester"><br><br>
+                                <!-- Submit button for course creation -->
+                                <button type="submit" class="btn btn-primary">Create</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Delete a Course Section -->
+                    <div class="delete" id="deleteCourseSection" style="display: none;">
+                        <div class="delete-course-container" style="text-align: center;">
+                            <!-- Content (table) for deleting courses will be dynamically generated -->
+                        </div>
+                    </div>                
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts for functionality -->
+    <script src="../cgi_bin/bootstrap/jquery.min.js"></script>
+    <script src="../cgi_bin/bootstrap/popper.min.js"></script>
+    <script src="../cgi_bin/bootstrap/bootstrap.min.js"></script>
+    <script src="../cgi_bin/connection.js"></script>
+
+    <script>
+        let connection = null
+        async function init(){
+            try {
+                connection = await Connection.connect();
+            } catch (error) {
+                if (error instanceof TypeError) {
+                    throw error
+                }
+                window.location.replace("../landingpage.html")
+            }
+        }
+        init()
+
+        function createCourse(event) {
+            event.preventDefault()
+            let data = new FormData(event.target)
+            connection.createBoard(data.get('courseName')).then(status => {
+                if (status != 0) {
+                    console.error("Error #" + status + ": Could not create board")
+                } else {
+                    connection.getBoards().then(rows => {
+                        let highest = 0
+                        rows.forEach(row => {
+                            if (row.board_name == data.get('courseName')) {
+                                highest = Math.max(row.board_id, highest);
+                            }
+                        })
+                        alert('Board created successfully. You are the admin of this board.')
+                        window.location.href = "./DiscussionBoard.html?course=" + highest
+                    })
+                }
+            })
+        }
+
+
+        document.getElementsByClassName("search-button")[0].addEventListener("click", function () {
+            let query = document.getElementsByClassName("search-box")[0].value;
+            let resultContent = document.getElementById("searchResults");
+
+            connection.searchBoards(query).then(courses => {
+                let row = '<div class="row">';
+
+                courses.forEach((course, index) => {
+                    row += `
+            <div class="col-md-4">
+                <div class="course-card">
+                    <h5>${course.board_name}</h5>
+                    <p>Section: ${course.board_id}</p>
+                    <p>Semester: None</p>
+                    <button class="join-course-btn" data-boardid="${course.board_id}">Join Course</button>
+                </div>
+            </div>`;
+
+                    if ((index + 1) % 3 === 0) {
+                        row += '</div><div class="row">';
+                    }
+                });
+
+                row += '</div>';
+                resultContent.innerHTML = row;
+
+                // 为每个加入按钮添加事件监听器
+                addJoinCourseListeners();
+            })
+                .catch(error => console.error('Error:', error));
+        });
+
+        // 为加入课程按钮添加事件监听器的函数
+        function addJoinCourseListeners() {
+            document.querySelectorAll('.join-course-btn').forEach(button => {
+                console.log('Adding listener to button', button); // 调试语句
+                button.addEventListener('click', function () {
+                    const boardId = this.getAttribute('data-boardid');
+                    console.log('Join button clicked for board ID:', boardId); // 调试语句
+                    joinCourse(boardId);
+                });
+            });
+        }
+
+
+        // 加入课程的函数
+        function joinCourse(boardId) {
+            console.log('Attempting to join board with ID:', boardId); // 调试语句
+            fetch('../cgi_bin/joinCourse.php', { // 确保路径是正确的
+                method: 'POST',
+                body: JSON.stringify({ boardId: boardId }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.text()) // 先获取文本内容
+                .then(text => {
+                    console.log("Received raw response:", text); // 打印原始响应文本
+                    return JSON.parse(text); // 尝试解析文本为JSON
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Request to join course sent successfully.');
+                    } else {
+                        alert('Failed to send request: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+
+
+
+
+
+
+        document.getElementById('myCourses').addEventListener('click', function() {
+            let myCoursesContent = document.getElementById('myCoursesContent');
+            myCoursesContent.style.display = 'block';
+
+            // request get course information
+            // fetch('selectboard.php') 
+            // .then(response => response.json()) 
+            // .then(courses => {
+            //     let row = '<div class="row">';
+
+            //     courses.forEach((course, index) => {
+            //         row += `
+            //         <div class="col-md-4">
+            //             <a href="DiscussionBoard.html?course=${encodeURIComponent(course[0])}" class="course-card-link">
+            //                 <div class="course-card">
+            //                     <h5>${course[0]}</h5> 
+            //                     <p>Section: ${course[1]}</p> 
+            //                     <p>Semester: ${course[2]}</p> 
+            //                 </div>
+            //             </a>
+            //         </div>`;
+
+            //         if ((index + 1) % 3 === 0) {
+            //             row += '</div><div class="row">';
+            //         }
+            //     });
+
+            //     row += '</div>';
+            //     myCoursesContent.innerHTML = row;
+            // })
+
+            // .catch(error => console.error('Error:', error));
+
+            connection.getBoards().then(courses => {
+                let row = '<div class="row">';
+
+                courses.forEach((course, index) => {
+                    row += `
+                    <div class="col-md-4">
+                        <a href="DiscussionBoard.html?course=${encodeURIComponent(course.board_id)}" class="course-card-link" data-boardid="${course.board_id}">
+                            <div class="course-card">
+                                <h5>${course.board_name}</h5>
+                                <p>Section: ${course.board_id}</p>
+                                <p>Semester: None</p>
+                            </div>
+                        </a>
+                    </div>`;
+
+                    if ((index + 1) % 3 === 0) {
+                        row += '</div><div class="row">';
+                    }
+                });
+
+                row += '</div>';
+                myCoursesContent.innerHTML = row;
+                addBoardListener();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                myCoursesContent.innerHTML = '<p>Error loading courses.</p>';
+            });
+
+            document.getElementById('searchCoursesSection').style.display = 'none';
+            document.getElementById('createCourseSection').style.display = 'none';
+            document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('deleteCourseSection').style.display = 'none';
+        });
+        
+        
+        // Event listener for 'Search for Courses' link
+        document.getElementById('searchCourses').addEventListener('click', function() {
+            document.getElementById('searchCoursesSection').style.display = 'block';
+            document.getElementById('createCourseSection').style.display = 'none';
+            document.getElementById('myCoursesContent').style.display = 'none'; 
+            document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('deleteCourseSection').style.display = 'none';
+        });
+        
+        // Event listener for 'Create a Course' link
+        document.getElementById('createCourse').addEventListener('click', function() {
+            document.getElementById('createCourseSection').style.display = 'block';
+            document.getElementById('searchCoursesSection').style.display = 'none';
+            document.getElementById('myCoursesContent').style.display = 'none'; 
+            document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('deleteCourseSection').style.display = 'none';
+        });
+
+        document.getElementById('logoButton').addEventListener('click', function() {
+            document.getElementById('welcomeSection').style.display = 'block';
+            document.getElementById('myCoursesContent').style.display = 'none';
+            document.getElementById('searchCoursesSection').style.display = 'none';
+            document.getElementById('createCourseSection').style.display = 'none';
+            document.getElementById('deleteCourseSection').style.display = 'none';
+        });
+
+        document.getElementById('deleteCourse').addEventListener('click', function() {
+            document.getElementById('deleteCourseSection').style.display = 'block';
+            document.getElementById('myCoursesContent').style.display = 'none';
+            document.getElementById('searchCoursesSection').style.display = 'none';
+            document.getElementById('createCourseSection').style.display = 'none';
+            document.getElementById('welcomeSection').style.display = 'none';
+
+            // Call a function to load and display courses in a table here
+            loadAndDisplayCourses();
+        });
+
+        function addBoardListener() {
+            // Add event listener to each course link
+            document.querySelectorAll('.course-card-link').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const boardID = this.getAttribute('data-boardid');
+                    setBoard(parseInt(boardID));
+                });
+            });
+        }
+
+        // sets session variables for course selection
+        function setBoard(boardID) {
+            connection.setBoard(boardID).then(result => {
+                console.log(result)
+                window.location.href = `DiscussionBoard.html?course=${encodeURIComponent(boardID)}`;
+            })
+        }
+        
+        // Event listener for 'Delete a course' link
+        function loadAndDisplayCourses() {
+            connection.getBoards().then(courses => {
+                let tableHtml = '<table>';
+                courses.forEach(course => {
+                    tableHtml += `
+                        <tr>
+                            <td>${course.board_name} #${course.board_id}</td>
+                            <td><button onclick="confirmDelete(${course.board_id})">Delete</button></td>
+                        </tr>`;
+                });
+                tableHtml += '</table>';
+                document.querySelector('.delete-course-container').innerHTML = tableHtml;
+            });
+        }
+
+        function confirmDelete(courseId) {
+            if (confirm('Warning: Please Confirm to delete the course')) {
+                deleteCourse(courseId);
+            }
+        }
+
+        function deleteCourse(courseId) {
+            // Add your logic here to send a request to the backend to delete the course
+            // After deletion, reload the courses list
+            connection.deleteBoard(courseId).then(status => {
+                if (status != 0) {
+                    console.error("Error #" + status + ": Could not delete board")
+                }
+            })
+            loadAndDisplayCourses();
+        } 
+
+        // When the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseSection = urlParams.get('course'); // Get course name from URL parameter
+
+            if (courseSection) {
+                // Display course-specific information
+                document.getElementById('contentArea').innerHTML = `<h3>Discussion Board for ${decodeURIComponent(courseSection)}</h3>`;
+                // Further logic to load posts for the course can be added here
+            }
+        });
+
+    </script>
+</body>
+</html>
