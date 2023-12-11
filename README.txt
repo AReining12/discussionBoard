@@ -4,7 +4,10 @@ Members and responsibilities:
 Anna Reining:
 - Add your responsibilities here
 Junji Duan:
-- Add your responsibilities here
+- Fronted
+    - Design All frontend html files
+      eg: Landing Page / registration page / select board page / discussion board page
+    - Design visual part of the website
 Mingchen Ju:
 - Add your responsibilities here
 Mikhail Lavrenov:
