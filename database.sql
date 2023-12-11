@@ -117,14 +117,14 @@ SELECT channels.board_id, channels.channel_id, channels.channel_name, users.user
 FROM messages
 INNER JOIN channels ON messages.channel_id=channels.channel_id
 INNER JOIN users ON messages.user_id=users.user_id
-ORDER BY messages.message_time ASC;
+ORDER BY messages.message_time DESC;
 
 CREATE VIEW visible_messages AS
 SELECT users.user, channel_messages.board_id, channel_messages.channel_id, channel_messages.channel_name, channel_messages.user AS author, channel_messages.message_title, channel_messages.message_text, channel_messages.message_time
 FROM channel_messages
 INNER JOIN channel_users ON channel_users.channel_id=channel_messages.channel_id
 INNER JOIN users ON users.user_id=channel_users.user_id
-ORDER BY channel_messages.message_time ASC;
+ORDER BY channel_messages.message_time DESC;
 
 CREATE VIEW user_boards AS
 SELECT users.user, boards.board_id, boards.board_name, board_users.is_board_admin, channels.channel_id, channels.channel_name
@@ -173,7 +173,7 @@ BEGIN
             board_id,
             1
         );
-        RETURN createChannel(user, board_id, 'announcements');
+        RETURN createChannel(user, board_id, 'Announcements');
     ELSE
         RETURN 3;
     END IF;
@@ -206,15 +206,15 @@ BEGIN
     END IF;
 END //
 
-CREATE FUNCTION sendMessage(user VARCHAR(64), channel_id INT, message_text VARCHAR(65535)) RETURNS INT
+CREATE FUNCTION sendMessage(user VARCHAR(64), channel_id INT, message_text VARCHAR(65535), message_title VARCHAR(64)) RETURNS INT
 BEGIN
     DECLARE user_id INT;
     SELECT users.user_id FROM users
     INNER JOIN channel_users ON users.user_id=channel_users.user_id
     WHERE users.user=user AND channel_users.channel_id=channel_id INTO user_id;
     IF user_id IS NOT NULL THEN
-        INSERT INTO messages (`message_text`, `user_id`, `channel_id`) VALUES
-        (message_text, user_id, channel_id);
+        INSERT INTO messages (`message_title`, `message_text`, `user_id`, `channel_id`) VALUES
+        (message_title, message_text, user_id, channel_id);
         RETURN 0;
     ELSE
         RETURN 7;

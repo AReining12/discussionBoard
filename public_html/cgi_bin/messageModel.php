@@ -11,20 +11,23 @@
     
 */
 class messageModel{
-    public function addMessage($boardID, $channelID, $userID, $message_text){
+    public function addMessage($boardID, $channelID, $userID, $message_text, $message_title){
         include('db_connect.php');
         require_once('session_start.php');
         $username = $_SESSION['username'];
         // adds user to database using stored function written by Mike
-        $stmt = $conn->prepare("SELECT sendMessage(?, ?, ?)");
-        $stmt->bind_param("sis", $username, $channelID, $message_text);
-        echo "$username";
-        echo "$channelID";
-        echo "$message_text";
+        $stmt = $conn->prepare("SELECT sendMessage(?, ?, ?, ?) AS code");
+        $stmt->bind_param("siss", $username, $channelID, $message_text, $message_title);
+        // echo "$username";
+        // echo "$channelID";
+        // echo "$message_text";
 
         $stmt->execute();
 
+        $code = $stmt->get_result()->fetch_all(MYSQLI_ASSOC)[0]["code"];
         $stmt->close();
+        $conn->close();
+        return $code;
     }
     public function getMessages($channelID){
         include('db_connect.php');

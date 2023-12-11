@@ -16,24 +16,24 @@ require_once('session_start.php');
 require_once('boardModel.php');
 
 class messageController {
-    public function addMessage($boardID, $channelID, $userID, $message){
+    public function addMessage($boardID, $channelID, $userID, $message, $message_title){
         // verify user can send message (is member)
         // verify that user is a member of channel
-        $userID = $_SESSION['user_id'];
+//        $userID = $_SESSION['user_id'];
 
-        $userModel = new userModel();
-        $isMember = $userModel->verifyMember($userID, $channelID);
+//        $userModel = new userModel();
+//        $isMember = $userModel->verifyMember($userID, $channelID);
         // echo "$isMember";
         
-
-        if ($isMember){
+        //user verification done in database
+//        if ($isMember){
             // call messageModel->addMessage
-            $messageModel = new MessageModel();
-            $messages = $messageModel->addMessage($boardID, $channelID, $userID, $message);
-
-        } 
-        header('Location: viewMessages.php');
-        exit;   
+        $messageModel = new MessageModel();
+        $code = $messageModel->addMessage($boardID, $channelID, $userID, $message, $message_title);
+        return $code;
+//        } 
+//        header('Location: viewMessages.php');
+//        exit;   
         
         // return user to viewMessages.php
     }
@@ -144,6 +144,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => true, 'message' => 'Success', 'data' => $rows]);           
                 } else {
                     echo json_encode(['success' => false, 'message' => 'No active board found', 'data' => []]);
+                }
+                break;
+
+            case 'send_message':
+                if (isset($_SESSION['boardID']) && isset($request->title) && isset($request->content) && isset($request->channel)) {
+                    $messageController = new messageController();
+                    $status = $messageController->addMessage($_SESSION['boardID'], $request->channel, $_SESSION['user_id'], $request->content, $request->title);
+                    echo json_encode(['success' => true, 'status' => $status]);           
+                } else {
+                    echo json_encode(['success' => false, 'status' => 1]);
                 }
                 break;
             

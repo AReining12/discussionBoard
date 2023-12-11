@@ -445,6 +445,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'status' => 2, 'message' => 'Illegal arguments']);
                 }
                 break;
+            case 'get_channels':
+                if (isset($_SESSION['boardID'])) {
+                    $boardModel = new boardModel();
+                    $channels = $boardModel->getUserChannels($_SESSION['username'], $_SESSION['boardID']);
+                    echo json_encode(['success' => true, 'status' => 0, 'data' => $channels]);
+                } else {
+                    echo json_encode(['success' => false, 'status' => 1]);
+                }
+                break;
             
             default:
                 echo json_encode(['success'=>false]);
