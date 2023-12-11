@@ -1,10 +1,11 @@
+DROP DATABASE IF EXISTS 2023fall-comp307-mlavre1;
+CREATE DATABASE 2023fall-comp307-mlavre1;
 USE 2023fall-comp307-mlavre1;
 
 -- 
 -- Table structure
 -- 
 
-DROP TABLE IF EXISTS groups;
 CREATE TABLE groups (
     group_id int NOT NULL AUTO_INCREMENT,
     group_name varchar(64) NOT NULL,
@@ -13,7 +14,6 @@ CREATE TABLE groups (
     UNIQUE (group_name)
 );
 
-DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     user_id int NOT NULL AUTO_INCREMENT,
     user varchar(64) NOT NULL,
@@ -28,14 +28,12 @@ CREATE TABLE users (
     UNIQUE (email)
 );
 
-DROP TABLE IF EXISTS boards;
 CREATE TABLE boards (
     board_id int NOT NULL AUTO_INCREMENT,
     board_name varchar(64) NOT NULL,
     PRIMARY KEY (board_id)
 );
 
-DROP TABLE IF EXISTS channels;
 CREATE TABLE channels (
     channel_id int NOT NULL AUTO_INCREMENT,
     channel_name varchar(64) NOT NULL,
@@ -45,7 +43,6 @@ CREATE TABLE channels (
     UNIQUE (board_id, channel_name)
 );
 
-DROP TABLE IF EXISTS messages;
 CREATE TABLE messages (
     message_id int NOT NULL AUTO_INCREMENT,
     message_title varchar(64) NOT NULL,
@@ -58,7 +55,6 @@ CREATE TABLE messages (
     FOREIGN KEY (channel_id) REFERENCES channels(channel_id)
 );
 
-DROP TABLE IF EXISTS board_users;
 CREATE TABLE board_users (
     user_id int NOT NULL,
     board_id int NOT NULL,
@@ -68,7 +64,6 @@ CREATE TABLE board_users (
     FOREIGN KEY (board_id) REFERENCES boards(board_id)
 );
 
-DROP TABLE IF EXISTS board_applicants;
 CREATE TABLE board_applicants (
     user_id int NOT NULL,
     board_id int NOT NULL,
@@ -77,7 +72,6 @@ CREATE TABLE board_applicants (
     FOREIGN KEY (board_id) REFERENCES boards(board_id)
 );
 
-DROP TABLE IF EXISTS channel_users;
 CREATE TABLE channel_users (
     user_id int NOT NULL,
     channel_id int NOT NULL,
@@ -86,7 +80,6 @@ CREATE TABLE channel_users (
     FOREIGN KEY (channel_id) REFERENCES channels(channel_id)
 );
 
-DROP TABLE IF EXISTS errors;
 CREATE TABLE errors (
     error_code int NOT NULL,
     error_description varchar(256) NOT NULL,
@@ -98,7 +91,6 @@ CREATE TABLE errors (
 -- Views for retrieving data
 -- 
 
-DROP VIEW IF EXISTS board_members;
 CREATE VIEW board_members AS
 SELECT boards.board_id, users.user, groups.group_name, board_users.is_board_admin
 FROM boards
@@ -106,7 +98,6 @@ INNER JOIN board_users ON boards.board_id=board_users.board_id
 INNER JOIN users ON users.user_id=board_users.user_id
 INNER JOIN groups ON users.group_id=groups.group_id;
 
-DROP VIEW IF EXISTS join_requests;
 CREATE VIEW join_requests AS
 SELECT boards.board_id, users.user, groups.group_name
 FROM boards
@@ -114,7 +105,6 @@ INNER JOIN board_applicants ON boards.board_id=board_applicants.board_id
 INNER JOIN users ON users.user_id=board_applicants.user_id
 INNER JOIN groups ON users.group_id=groups.group_id;
 
-DROP VIEW IF EXISTS channel_members;
 CREATE VIEW channel_members AS
 SELECT channels.channel_id, users.user, groups.group_name
 FROM channels
@@ -122,7 +112,6 @@ INNER JOIN channel_users ON channels.channel_id=channel_users.channel_id
 INNER JOIN users ON users.user_id=channel_users.user_id
 INNER JOIN groups ON users.group_id=groups.group_id;
 
-DROP VIEW IF EXISTS channel_messages;
 CREATE VIEW channel_messages AS
 SELECT channels.board_id, channels.channel_id, channels.channel_name, users.user, messages.message_title, messages.message_text, messages.message_time
 FROM messages
@@ -130,7 +119,6 @@ INNER JOIN channels ON messages.channel_id=channels.channel_id
 INNER JOIN users ON messages.user_id=users.user_id
 ORDER BY messages.message_time DESC;
 
-DROP VIEW IF EXISTS visible_messages;
 CREATE VIEW visible_messages AS
 SELECT users.user, channel_messages.board_id, channel_messages.channel_id, channel_messages.channel_name, channel_messages.user AS author, channel_messages.message_title, channel_messages.message_text, channel_messages.message_time
 FROM channel_messages
@@ -138,7 +126,6 @@ INNER JOIN channel_users ON channel_users.channel_id=channel_messages.channel_id
 INNER JOIN users ON users.user_id=channel_users.user_id
 ORDER BY channel_messages.message_time DESC;
 
-DROP VIEW IF EXISTS user_boards;
 CREATE VIEW user_boards AS
 SELECT users.user, boards.board_id, boards.board_name, board_users.is_board_admin, channels.channel_id, channels.channel_name
 FROM users
@@ -147,7 +134,6 @@ INNER JOIN boards ON board_users.board_id=boards.board_id
 INNER JOIN channel_users ON channel_users.user_id=users.user_id
 INNER JOIN channels ON channel_users.channel_id=channels.channel_id AND channels.board_id=boards.board_id;
 
-DROP VIEW IF EXISTS user_info;
 CREATE VIEW user_info AS
 SELECT users.first_name, users.last_name, users.email, users.user, users.pass, groups.group_name, groups.is_staff
 FROM users
@@ -158,7 +144,6 @@ INNER JOIN groups on users.group_id=groups.group_id;
 --
 
 DELIMITER //
-DROP FUNCTION IF EXISTS registerUser//
 CREATE FUNCTION registerUser(user varchar(64), pass varchar(64), first_name varchar(64), last_name varchar(64), email varchar(64), group_id int) RETURNS INT
 BEGIN
     IF EXISTS(SELECT users.user FROM users WHERE users.user=user)
@@ -174,7 +159,6 @@ BEGIN
     RETURN 0;
 END //
 
-DROP FUNCTION IF EXISTS createBoard//
 CREATE FUNCTION createBoard(user VARCHAR(64), board_name VARCHAR(64)) RETURNS INT
 BEGIN
     DECLARE board_id INT;
@@ -195,7 +179,6 @@ BEGIN
     END IF;
 END //
 
-DROP FUNCTION IF EXISTS createChannel//
 CREATE FUNCTION createChannel(user VARCHAR(64), board_id INT, channel_name VARCHAR(64)) RETURNS INT
 BEGIN
     DECLARE channel_id INT;
@@ -223,7 +206,6 @@ BEGIN
     END IF;
 END //
 
-DROP FUNCTION IF EXISTS sendMessage//
 CREATE FUNCTION sendMessage(user VARCHAR(64), channel_id INT, message_text VARCHAR(65532), message_title VARCHAR(64)) RETURNS INT
 BEGIN
     DECLARE user_id INT;
@@ -239,7 +221,6 @@ BEGIN
     END IF;
 END //
 
-DROP FUNCTION IF EXISTS joinBoard//
 CREATE FUNCTION joinBoard(user VARCHAR(64), board_id INT) RETURNS INT
 BEGIN
     DECLARE user_id INT;
@@ -262,7 +243,6 @@ BEGIN
     END IF;
 END //
 
-DROP FUNCTION IF EXISTS approve//
 CREATE FUNCTION approve(user VARCHAR(64), board_id INT) RETURNS INT
 BEGIN
     DECLARE user_id INT;
@@ -290,7 +270,6 @@ BEGIN
     END IF;
 END //
 
-DROP FUNCTION IF EXISTS reject//
 CREATE FUNCTION reject(user VARCHAR(64), board_id INT) RETURNS INT
 BEGIN
     DECLARE user_id INT;
@@ -313,7 +292,6 @@ BEGIN
     END IF;
 END //
 
-DROP FUNCTION IF EXISTS removeMember//
 CREATE FUNCTION removeMember(user VARCHAR(64), board_id INT) RETURNS INT
 BEGIN
     DECLARE user_id INT;
@@ -333,7 +311,6 @@ BEGIN
     END IF;
 END //
 
-DROP FUNCTION IF EXISTS deleteChannel//
 CREATE FUNCTION deleteChannel(channel_id INT) RETURNS INT
 BEGIN
     DELETE FROM messages WHERE messages.channel_id=channel_id;
@@ -342,7 +319,6 @@ BEGIN
     RETURN 0;
 END //
 
-DROP FUNCTION IF EXISTS deleteBoard//
 CREATE FUNCTION deleteBoard(user VARCHAR(64), board_id INT) RETURNS INT
 BEGIN
     IF NOT EXISTS (
