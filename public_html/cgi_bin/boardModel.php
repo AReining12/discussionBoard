@@ -398,16 +398,17 @@ class boardModel {
         return $rows;
     }
 
-    public function getCoursesNotJoined($userID){
+    public function getCoursesNotJoined($username){
+        $userBoards = $this->getUserBoards($username);
+
         include('db_connect.php');
 
-        
         // SQL statement
         // this shows all boards, need to update to only include boards user is not in
-        $stmt = $conn->prepare("SELECT board_name FROM boards");
+        $stmt = $conn->prepare("SELECT board_id, board_name FROM boards");
 
-        /* Bind parameters
-        $stmt->bind_param("si", $username, $boardID);*/
+        // Bind parameters
+        //$stmt->bind_param("s", $username);
 
         // Execute the query
         $stmt->execute();
@@ -417,6 +418,14 @@ class boardModel {
         $rows = $result->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
         $conn->close();
+
+        foreach ($rows as $index => $row) {
+            foreach ($userBoards as &$userBoard) {
+                if (count(array_diff_assoc($row, $userBoard)) == 0) {
+                    unset($rows[$index]);
+                }
+            }
+        }
         return $rows;
     }
 

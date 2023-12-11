@@ -398,6 +398,7 @@
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
         });
         
         
@@ -408,6 +409,7 @@
             document.getElementById('myCoursesContent').style.display = 'none'; 
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
         });
         
         // Event listener for 'Create a Course' link
@@ -417,6 +419,7 @@
             document.getElementById('myCoursesContent').style.display = 'none'; 
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
         });
 
         document.getElementById('logoButton').addEventListener('click', function() {
@@ -425,6 +428,7 @@
             document.getElementById('searchCoursesSection').style.display = 'none';
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
         });
 
         document.getElementById('deleteCourse').addEventListener('click', function() {
@@ -433,6 +437,7 @@
             document.getElementById('searchCoursesSection').style.display = 'none';
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
 
             // Call a function to load and display courses in a table here
             loadAndDisplayCourses();
@@ -478,8 +483,8 @@
                 courses.forEach(course => {
                     tableHtml += `
                         <tr>
-                            <td>${course.board_name} #${course.board_id}</td>
-                            <td><button onclick="confirmDelete(${course.board_id})">Delete</button></td>
+                            <td style="padding-right: 1em"><h5>${course.board_name} #${course.board_id}</h5></td>
+                            <td><button class="btn btn-primary" onclick="confirmDelete(${course.board_id})">Delete</button></td>
                         </tr>`;
                 });
                 tableHtml += '</table>';
@@ -506,11 +511,11 @@
 
         function loadAndDisplayCoursesToJoin() {
             // Use the connection object to get a list of courses the user is not a part of
-            connection.getBoards().then(courses => {
+            connection.getCoursesNotJoined().then(courses => {
                 let buttonsHtml = '';
                 courses.forEach(course => {
                     buttonsHtml += `
-                        <button onclick="requestToJoinCourse(${course.board_id})">
+                        <button class="btn btn-primary" onclick="requestToJoinCourse(${course.board_id})">
                             ${course.board_name} - Section: ${course.board_id}
                         </button><br>`;
                 });

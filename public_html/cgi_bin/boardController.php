@@ -481,10 +481,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
 
             case 'get_courses_not_joined':
-                if (isset($_SESSION['user_id'])) {
-                    $userID = $_SESSION['user_id'];
+                if (isset($_SESSION['username'])) {
+                    $username = $_SESSION['username'];
                     $boardModel = new boardModel();
-                    $courses = $boardModel->getCoursesNotJoined($userID);
+                    $courses = $boardModel->getCoursesNotJoined($username);
                     echo json_encode(['success' => true, 'status' => 0, 'data' => $courses]);
                 } else {
                     echo json_encode(['success' => false, 'status' => 1]);

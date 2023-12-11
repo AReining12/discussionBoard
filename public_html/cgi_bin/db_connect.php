@@ -6,7 +6,7 @@
 $host = 'localhost';
 $dbname = 'comp307';
 $dbusername = 'root'; 
-$dbpassword = 'comp307Admin'; 
+$dbpassword = ''; 
 
 // Create connection
 $conn = new mysqli($host, $dbusername, $dbpassword, $dbname);

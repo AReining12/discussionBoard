@@ -140,7 +140,7 @@ class Connection {
 
     async getCoursesNotJoined() {
         let data = await Connection.ajax("../cgi_bin/boardController.php", {action: "get_courses_not_joined"})
-        // enforceTypes(data, "object", data.success, "boolean", data.status, "number", data.data, "object")
+        enforceTypes(data, "object", data.success, "boolean", data.status, "number", data.data, "object")
         if (!data.success) {
             throw new Error("Action failed with error code " + data.status)
         }
