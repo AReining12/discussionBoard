@@ -69,12 +69,20 @@
 
         .welcome {
             min-height: 95vh; /* Full viewport height */
-            background-image: url('../asserts/images/welcome.jpg');
+            background: 
+                linear-gradient(
+                to top,
+                rgba(200, 200, 255, 0),
+                rgba(0, 0, 100, 0.4)
+                ),
+                url('../asserts/images/welcome.jpg');
             background-size: cover; 
             position: relative; /* 使绝对定位的子元素（如 .logout）相对于此元素定位 */
         }
 
         .welcome-text{
+            margin-top: 1rem;
+            font-family: Tahoma, Arial, sans-serif;
             font-weight: bold; 
             text-align: center; 
             color: white; 
@@ -180,7 +188,7 @@
                 <div class="sidebar-link" id="searchCourses">Search for Courses</div>
                 <div class="sidebar-link" id="createCourse">Create a Course</div>
                 <div class="sidebar-link" id="deleteCourse">Delete a Course</div>
-                <div class="sidebar-link" id="administrateBoards" style="display: none;">Administrate Boards</div>
+                <div class="sidebar-link" id="requestToJoin">Request to Join Course</div>
 
             </div>
 
@@ -236,18 +244,14 @@
                         <div class="delete-course-container" style="text-align: center;">
                             <!-- Content (table) for deleting courses will be dynamically generated -->
                         </div>
+                    </div> 
+                    
+                    <!-- Request to join course section-->
+                    <div class="request-to-join" id="requestToJoinSection" style="display: none;">
+                        <h2>Request to Join a Course</h2>
+                        <p>Click on a course to request to join:</p>
+                        <div id="requestToJoinCourses"></div>
                     </div>
-
-                    <!-- board admin for applicant -->
-                    <div id="adminSection" style="display: none;">
-                        <h2>Administrate Boards</h2>
-                        <div id="adminBoardsList"></div>
-                    </div>
-
-
-
-
-
 
                 </div>
             </div>
@@ -294,31 +298,26 @@
                 }
             })
         }
-
+       
 
         document.getElementsByClassName("search-button")[0].addEventListener("click", function () {
-            let query = document.getElementsByClassName("search-box")[0].value;
-            // Check if the search query is empty after trimming white spaces
-            if (query.trim() === '') {
-                alert('Please enter a search term.');
-                return;
-            }
-            let resultContent = document.getElementById("searchResults");
-            
+            let query = document.getElementsByClassName("search-box")[0].value
+            let resultContent = document.getElementById("searchResults")
 
             connection.searchBoards(query).then(courses => {
                 let row = '<div class="row">';
 
                 courses.forEach((course, index) => {
                     row += `
-            <div class="col-md-4">
-                <div class="course-card">
-                    <h5>${course.board_name}</h5>
-                    <p>Section: ${course.board_id}</p>
-                    <p>Semester: None</p>
-                    <button class="join-course-btn" data-boardid="${course.board_id}">Join Course</button>
-                </div>
-            </div>`;
+                    <div class="col-md-4">
+                        <a href="DiscussionBoard.html?course=${encodeURIComponent(course.board_id)}" class="course-card-link" data-boardid="${course.board_id}">
+                            <div class="course-card">
+                                <h5>${course.board_name}</h5> 
+                                <p>Section: ${course.board_id}</p> 
+                                <p>Semester: None</p> 
+                            </div>
+                        </a>
+                    </div>`;
 
                     if ((index + 1) % 3 === 0) {
                         row += '</div><div class="row">';
@@ -327,91 +326,20 @@
 
                 row += '</div>';
                 resultContent.innerHTML = row;
-
-                // Adding event listeners to all join course buttons
-                addJoinCourseListeners();
+                addBoardListener()
             })
-                .catch(error => console.error('Error:', error));
-        });
 
-        // Function to add event listeners to join course buttons
-        function addJoinCourseListeners() {
-            // Select all elements with the class 'join-course-btn'
-            document.querySelectorAll('.join-course-btn').forEach(button => {
-                console.log('Adding listener to button', button);
-                button.addEventListener('click', function () { // Add a click event listener to each button
-                    const boardId = this.getAttribute('data-boardid');
-                    console.log('Join button clicked for board ID:', boardId);
-                    joinCourse(boardId);
-                });
-            });
-        }
+            .catch(error => console.error('Error:', error));
 
-
-        // Function to join a course (board)
-        function joinCourse(boardId) {
-            console.log('Attempting to join board with ID:', boardId); // Debug statement: logging the board ID
-            fetch('../cgi_bin/joinCourse.php', {
-                method: 'POST',
-                body: JSON.stringify({ boardId: boardId }),// Sending boardId in the request body
-                headers: {
-                    'Content-Type': 'application/json'// Set the content type to JSON
-                }
-            })
-                .then(response => response.text()) // First, get the text content of the response
-                .then(text => {
-                    console.log("Received raw response:", text); // Debug statement: log the raw response text
-                    return JSON.parse(text); // parse the text as JSON
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('Request to join course sent successfully.'); //Notify the user of successful request submission
-                    } else {
-                        alert('Failed to send request: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-
-
-        function loadAdminBoards() {
-
-            console.log(document.getElementById('adminBoardsList'));
-
-            fetch('../cgi_bin/listAdminBoards.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        let boardsHtml = '<ul>';
-                        data.boards.forEach(board => {
-                            boardsHtml += `<li>${board.board_name}
-                                   <button onclick="loadBoardApplicants(${board.board_id})">View Applicants</button>
-                                   </li>`;
-                        });
-                        boardsHtml += '</ul>';
-                        document.getElementById('adminBoardsList').innerHTML = boardsHtml;
-                    } else {
-                        alert('Failed to load boards: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading boards:', error);
-                });
-        }
-
-
-
-
+        })
 
         document.getElementById('myCourses').addEventListener('click', function() {
             let myCoursesContent = document.getElementById('myCoursesContent');
             myCoursesContent.style.display = 'block';
 
             // request get course information
-            // fetch('selectboard.php')
-            // .then(response => response.json())
+            // fetch('selectboard.php') 
+            // .then(response => response.json()) 
             // .then(courses => {
             //     let row = '<div class="row">';
 
@@ -420,9 +348,9 @@
             //         <div class="col-md-4">
             //             <a href="DiscussionBoard.html?course=${encodeURIComponent(course[0])}" class="course-card-link">
             //                 <div class="course-card">
-            //                     <h5>${course[0]}</h5>
-            //                     <p>Section: ${course[1]}</p>
-            //                     <p>Semester: ${course[2]}</p>
+            //                     <h5>${course[0]}</h5> 
+            //                     <p>Section: ${course[1]}</p> 
+            //                     <p>Semester: ${course[2]}</p> 
             //                 </div>
             //             </a>
             //         </div>`;
@@ -462,35 +390,25 @@
                 myCoursesContent.innerHTML = row;
                 addBoardListener();
             })
-                .catch(error => {
-                    console.error('Error:', error);
-                    myCoursesContent.innerHTML = '<p>Error loading courses.</p>';
-                });
-
-
-
+            .catch(error => {
+                console.error('Error:', error);
+                myCoursesContent.innerHTML = '<p>Error loading courses.</p>';
+            });
 
             document.getElementById('searchCoursesSection').style.display = 'none';
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
-
         });
-
-
+        
+        
         // Event listener for 'Search for Courses' link
         document.getElementById('searchCourses').addEventListener('click', function() {
             document.getElementById('searchCoursesSection').style.display = 'block';
             document.getElementById('createCourseSection').style.display = 'none';
-            document.getElementById('myCoursesContent').style.display = 'none';
+            document.getElementById('myCoursesContent').style.display = 'none'; 
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
-
-            // 重置搜索框和清除搜索结果
-            document.getElementsByClassName("search-box")[0].value = '';
-            document.getElementById("searchResults").innerHTML = '';
         });
         
         // Event listener for 'Create a Course' link
@@ -500,8 +418,6 @@
             document.getElementById('myCoursesContent').style.display = 'none'; 
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
-
         });
 
         document.getElementById('logoButton').addEventListener('click', function() {
@@ -510,8 +426,6 @@
             document.getElementById('searchCoursesSection').style.display = 'none';
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
-
         });
 
         document.getElementById('deleteCourse').addEventListener('click', function() {
@@ -520,15 +434,10 @@
             document.getElementById('searchCoursesSection').style.display = 'none';
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('welcomeSection').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
-
-
 
             // Call a function to load and display courses in a table here
             loadAndDisplayCourses();
         });
-
-
 
         function addBoardListener() {
             // Add event listener to each course link
@@ -544,8 +453,9 @@
         // sets session variables for course selection
         function setBoard(boardID) {
             connection.setBoard(boardID).then(result => {
-                console.log(result)
-                window.location.href = `DiscussionBoard.html?course=${encodeURIComponent(boardID)}`;
+                if (result.status != 2) {
+                    window.location.href = `DiscussionBoard.html?course=${encodeURIComponent(boardID)}`;
+                }
             })
         }
         
@@ -583,126 +493,16 @@
         } 
 
         // When the page loads
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Parse the URL parameters
+        document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const courseSection = urlParams.get('course');
+            const courseSection = urlParams.get('course'); // Get course name from URL parameter
 
             if (courseSection) {
-                // Display information for a specific course
+                // Display course-specific information
                 document.getElementById('contentArea').innerHTML = `<h3>Discussion Board for ${decodeURIComponent(courseSection)}</h3>`;
-                // Load course information
                 // Further logic to load posts for the course can be added here
             }
-
-            try {
-                // Check if the user is an admin
-                const isAdmin = await checkIfUserIsAdmin();
-                if (isAdmin) {
-                    // If the user is an admin, show the link to manage boards and load the boards
-                    document.getElementById('administrateBoards').style.display = 'block';
-                    loadAdminBoards();
-                }
-            } catch (error) {
-                console.error('Error during admin check:', error);
-            }
         });
-
-        // check if the user is admin of any board
-        async function checkIfUserIsAdmin() {
-            try {
-                const response = await fetch('../cgi_bin/listAdminBoards.php');
-                const data = await response.json();
-                return data.success && data.boards.length > 0;
-            } catch (error) {
-                console.error('Error checking admin status:', error);
-                return false;
-            }
-        }
-
-
-        
-        function loadBoardApplicants(boardId) {
-            fetch(`../cgi_bin/getBoardApplicants.php?boardId=${boardId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Check if there are any applicants
-                        if (data.applicants.length > 0) {
-                            let applicantsHtml = '<ul>';
-                            data.applicants.forEach(applicant => {
-                                // Construct HTML for each applicant
-                                applicantsHtml += `<li>${applicant.user} (${applicant.email})
-                               <button onclick="approveApplicant(${applicant.user_id}, ${boardId})">Approve</button>
-                               <button onclick="rejectApplicant(${applicant.user_id}, ${boardId})">Reject</button>
-                               </li>`;
-                            });
-                            applicantsHtml += '</ul>';
-                            document.getElementById('adminBoardsList').innerHTML = applicantsHtml;
-                        } else {
-                            // If no applicants, show an alert
-                            alert('No applicants for this course.');
-                        }
-                    } else {
-                        alert('Failed to load applicants: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading applicants:', error);
-                });
-        }
-
-        // Event listener for 'Administrate Boards' sidebar link
-        document.getElementById('administrateBoards').addEventListener('click', function() {
-            document.getElementById('adminSection').style.display = 'block';
-            // Hide other sections
-            document.getElementById('myCoursesContent').style.display = 'none';
-            document.getElementById('searchCoursesSection').style.display = 'none';
-            document.getElementById('createCourseSection').style.display = 'none';
-            document.getElementById('welcomeSection').style.display = 'none';
-            document.getElementById('deleteCourseSection').style.display = 'none';
-
-            loadAdminBoards();
-        });
-
-
-        // Function to approve an applicant
-        function approveApplicant(userId, boardId) {
-            fetch(`../cgi_bin/approveApplicant.php?userId=${userId}&boardId=${boardId}`)
-                .then(response => response.text()) // First, get the text content
-                .then(text => {
-                    console.log("Received raw response:", text); // Print the raw response text
-                    return JSON.parse(text); // Attempt to parse the text as JSON
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert('Applicant approved successfully.');
-                        loadBoardApplicants(boardId); // Reload the applicants list to reflect changes.
-                    } else {
-                        alert('Failed to approve applicant: ' + data.error);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        // Function to reject an applicant
-        function rejectApplicant(userId, boardId) {
-            fetch(`../cgi_bin/rejectApplicant.php?userId=${userId}&boardId=${boardId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Applicant rejected successfully.');
-                        loadBoardApplicants(boardId); // Reload the applicants list to reflect changes
-                    } else {
-                        alert('Failed to reject applicant: ' + data.error);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-
-        
-
 
     </script>
 </body>

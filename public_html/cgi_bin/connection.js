@@ -124,6 +124,29 @@ class Connection {
         return data.status
     }
 
+    async addToWaitingList(courseId) {
+        enforceTypes(courseId, "number")
+        let data = await Connection.ajax("../cgi_bin/boardController.php", {action: "add_to_waiting_list", 'boardID':courseId})
+        enforceTypes(data, "object", data.success, "boolean", data.status, "number")
+        if (!data.success) {
+            let errorText = "Action failed with error code " + data.status
+            if (data.status == 7) {
+                errorText = "Unauthorized access to channel id " + courseId
+            }
+            throw new Error(errorText)
+        }
+        return data.status
+    }
+
+    async getCoursesNotJoined() {
+        let data = await Connection.ajax("../cgi_bin/boardController.php", {action: "get_courses_not_joined"})
+        // enforceTypes(data, "object", data.success, "boolean", data.status, "number", data.data, "object")
+        if (!data.success) {
+            throw new Error("Action failed with error code " + data.status)
+        }
+        return Object.values(data.data)
+    }
+
     static async connect() {
         let data = await Connection.ajax("../cgi_bin/loginhandler.php", {action: "authenicate"})
         enforceTypes(data, "object", data.success, "boolean")

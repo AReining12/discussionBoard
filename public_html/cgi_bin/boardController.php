@@ -378,6 +378,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $boardController->deleteChannel($boardID, $channelName);
                 break;
 
+            case 'approve_members':
+                // get board id, username
+                $boardName = $_SESSION['boardname'];
+
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+                // get user name
+                $username = $_POST['name'];
+
+                $boardModel->approveMember($username, $boardID);
+                break;
+
 
                 
         }
@@ -445,6 +458,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'status' => 2, 'message' => 'Illegal arguments']);
                 }
                 break;
+
             case 'get_channels':
                 if (isset($_SESSION['boardID'])) {
                     $boardModel = new boardModel();
@@ -454,6 +468,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'status' => 1]);
                 }
                 break;
+
+            case 'add_to_waiting_list':
+                if (isset($_SESSION['user_id']) && isset($request->boardID)) {
+                    $boardModel = new boardModel();
+                    // $boardID = $boardModel->getBoardID($request->boardName);
+                    $status = $boardModel->addToWaitingList($_SESSION['user_id'], $request->boardID);
+                    echo json_encode(['success' => true, 'status' => $status]);           
+                } else {
+                    echo json_encode(['success' => false, 'status' => 1]);
+                }
+                break;
+
+            case 'get_courses_not_joined':
+                if (isset($_SESSION['user_id'])) {
+                    $userID = $_SESSION['user_id'];
+                    $boardModel = new boardModel();
+                    $courses = $boardModel->getCoursesNotJoined($userID);
+                    echo json_encode(['success' => true, 'status' => 0, 'data' => $courses]);
+                } else {
+                    echo json_encode(['success' => false, 'status' => 1]);
+                }
+                break;
+
             
             default:
                 echo json_encode(['success'=>false]);

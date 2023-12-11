@@ -218,7 +218,7 @@
         }
 
         #filterChannel button {
-            font-size: min(1.5vw, 1em);
+            font-size: 1.5vw;
         }
 
     </style>
@@ -236,6 +236,8 @@
                 <a href="SelectBoard.html" class="mycourses-link"><b>My Courses</b></a>
                 <div class="make-post" id="makepost">Make a Post</div>
                 <div class="manage-system" id="managesystem">Manage System</div>
+                <div class="view-waiting-list" id="viewwaitinglist">View Waiting List</div>
+
                 <div class="dropdown" id="filterChannel">
                     <button class="btn btn-secondary dropdown-toggle channel-select" type="button" data-toggle="dropdown" aria-expanded="false">
                         All channels
@@ -474,10 +476,17 @@
             manageChannelMembersButton.id = 'manageChannelMembers';
             manageChannelMembersButton.textContent = 'Manage Channel Members';
 
+            /* Create Manage Channel Members button
+            const viewWaitingListButton = document.createElement('div');
+            viewWaitingListButton.className = 'view-waiting-list';
+            viewWaitingListButton.id = 'viewWaitingList';
+            viewWaitingListButton.textContent = 'View Waiting List';*/
+
             // Append buttons to the welcome section
             welcomeSection.appendChild(manageBoardMemberButton);
             welcomeSection.appendChild(manageChannelsButton);
             welcomeSection.appendChild(manageChannelMembersButton); 
+            // welcomeSection.appendChild(viewWaitingListButton);
 
             //  Event listeners for buttons:
             document.getElementById('manageBoardMember').addEventListener('click', function() {
@@ -504,10 +513,34 @@
                 }
             });
 
+            document.getElementById('viewwaitinglist').addEventListener('click', function() {
+                try {
+                    window.location.href = '../cgi_bin/manageChannelMembers.php';
+                } catch (error) {
+                    console.error('Error navigating to manageChannelMembers.php:', error);
+                }
+            });
+
         }
         
         // Event listener for 'Manage System' button click
         document.getElementById('managesystem').addEventListener('click', function() {
+            const welcomeSection = document.getElementById('welcomeSection');
+            welcomeSection.style.display = 'block'; // Show the welcome section
+
+            // Clear the previously displayed post content
+            const postDisplayArea = document.getElementById('postDisplayArea');
+                postDisplayArea.innerHTML = '';
+
+            // Hide 'Make a Post' form section
+            const makepostSection = document.getElementById('makepostSection');
+            if (makepostSection) {
+                makepostSection.style.display = 'none';
+            }
+
+        });
+
+        document.getElementById('viewwaitinglist').addEventListener('click', function() {
             const welcomeSection = document.getElementById('welcomeSection');
             welcomeSection.style.display = 'block'; // Show the welcome section
 

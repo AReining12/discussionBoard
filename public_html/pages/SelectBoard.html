@@ -188,6 +188,7 @@
                 <div class="sidebar-link" id="searchCourses">Search for Courses</div>
                 <div class="sidebar-link" id="createCourse">Create a Course</div>
                 <div class="sidebar-link" id="deleteCourse">Delete a Course</div>
+                <div class="sidebar-link" id="requestToJoin">Request to Join Course</div>
 
             </div>
 
@@ -243,7 +244,13 @@
                         <div class="delete-course-container" style="text-align: center;">
                             <!-- Content (table) for deleting courses will be dynamically generated -->
                         </div>
-                    </div>                
+                    </div>
+                    
+                    <div class="request-to-join" id="requestToJoinSection" style="display: none;">
+                        <h2>Request to Join a Course</h2>
+                        <p>Click on a course to request to join:</p>
+                        <div id="requestToJoinCourses"></div>
+                    </div>
 
                 </div>
             </div>
@@ -431,6 +438,19 @@
             loadAndDisplayCourses();
         });
 
+        // Event listener for 'Request to Join Course' link
+        document.getElementById('requestToJoin').addEventListener('click', function() {
+            document.getElementById('requestToJoinSection').style.display = 'block';
+            document.getElementById('myCoursesContent').style.display = 'none';
+            document.getElementById('searchCoursesSection').style.display = 'none';
+            document.getElementById('createCourseSection').style.display = 'none';
+            document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('deleteCourseSection').style.display = 'none';
+
+            // Call a function to load and display courses for the user to join
+            loadAndDisplayCoursesToJoin();
+        });
+
         function addBoardListener() {
             // Add event listener to each course link
             document.querySelectorAll('.course-card-link').forEach(link => {
@@ -483,6 +503,30 @@
             })
             loadAndDisplayCourses();
         } 
+
+        function loadAndDisplayCoursesToJoin() {
+            // Use the connection object to get a list of courses the user is not a part of
+            connection.getBoards().then(courses => {
+                let buttonsHtml = '';
+                courses.forEach(course => {
+                    buttonsHtml += `
+                        <button onclick="requestToJoinCourse(${course.board_id})">
+                            ${course.board_name} - Section: ${course.board_id}
+                        </button><br>`;
+                });
+                document.getElementById('requestToJoinCourses').innerHTML = buttonsHtml;
+            });
+        }
+
+        function requestToJoinCourse(courseId) {
+            // if user is not already a part of this course, adds them to waiting list
+            connection.addToWaitingList(courseId).then(status => {
+                if (status != 0){
+                    console.error("Error #" + status + ": could not add to waiting list")
+                }
+            })
+            alert(`Request to join course #${courseId} sent successfully!`);
+        }
 
         // When the page loads
         document.addEventListener('DOMContentLoaded', function() {
