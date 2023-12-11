@@ -1,5 +1,6 @@
 <?php
     session_start();
+//Mingchen Ju 260864282
     include 'db_connect.php'; // Include the database connection
 
     if (isset($_SESSION['user_id'])) {
