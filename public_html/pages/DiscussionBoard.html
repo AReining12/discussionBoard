@@ -79,6 +79,8 @@
     
         .post-list {
             list-style-type: none;
+            overflow-y: auto;
+            height: 45vh;
             padding: 0;
         }
     
@@ -202,9 +204,21 @@
             border-radius: 1em;
         }
 
+        .channel-select {
+            border-radius: 2em;
+        }
+
+        .channel-select:hover {
+            cursor: pointer;
+        }
+
         .time {
             font-size: 0.8em;
             color: darkgray;
+        }
+
+        #filterChannel button {
+            font-size: 1.5vw;
         }
 
     </style>
@@ -222,6 +236,16 @@
                 <a href="SelectBoard.html" class="mycourses-link"><b>My Courses</b></a>
                 <div class="make-post" id="makepost">Make a Post</div>
                 <div class="manage-system" id="managesystem">Manage System</div>
+                <div class="dropdown" id="filterChannel">
+                    <button class="btn btn-secondary dropdown-toggle channel-select" type="button" data-toggle="dropdown" aria-expanded="false">
+                        All channels
+                    </button>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item">
+                            <span class="btn-secondary channel-select" style="padding: 0.5em" value="-1">All channels</span>
+                        </div>
+                    </div>
+                </div>
                 <input type="text" class="form-control search-box" placeholder="Search posts...">
                 <!-- List where posts will be dynamically added -->
                 <div class="post-list"></div>
@@ -299,6 +323,7 @@
                     }
                     posts = await connection.getBoardMessages()
                     let channelSelect = document.getElementById('postVisibility')
+                    let channelFilter = document.getElementById('filterChannel')
                     channelSelect.innerHTML = ""
                     let channels = await connection.getChannels()
                     channels.forEach(channel => {
@@ -306,7 +331,21 @@
                         option.text = channel.channel_name
                         option.value = channel.channel_id
                         channelSelect.appendChild(option)
+
+                        let parent = document.createElement('div')
+                        parent.classList.add("dropdown-item")
+                        let item = document.createElement('span')
+                        item.classList.add("channel-select")
+                        item.style.padding = '0.5em'
+                        item.style.color = 'black'
+                        item.style.backgroundColor = `hsl(` + ((channel.channel_id*130)%360) + `,100%,75%)`
+                        item.innerHTML = channel.channel_name
+                        item.setAttribute("value", channel.channel_id)
+                        parent.appendChild(item)
+                        parent.addEventListener('click', filterByChannel)
+                        channelFilter.getElementsByClassName('dropdown-menu')[0].appendChild(parent)
                     })
+                    channelFilter.getElementsByClassName('dropdown-menu')[0].children[0].addEventListener('click', filterByChannel)
                 } else {
                     posts = []
                 }
@@ -318,6 +357,21 @@
                 }
                 window.location.replace("../landingpage.html")
             }
+        }
+
+        let activeChannel = -1
+
+        function filterByChannel(event) {
+            let active = document.getElementById('filterChannel').getElementsByClassName('dropdown-toggle')[0]
+            active.innerHTML = event.target.innerHTML
+            let value = event.target.getAttribute("value")
+            active.setAttribute("value", value)
+            active.style.backgroundColor = event.target.style.backgroundColor
+            active.style.color = event.target.style.color
+            active.style.borderColor = "transparent"
+
+            activeChannel = parseInt(value)
+            filterPosts(document.getElementsByClassName('search-box')[0].value)
         }
 
         function legibleTime(time) {
@@ -564,15 +618,18 @@
         }
 
         // Initial display of all posts
-        displayPosts(); 
+        // displayPosts(); 
 
         // Event listener for search functionality
         document.querySelector('.search-box').addEventListener('input', function(event) {
-            const searchTerm = event.target.value.toLowerCase();
-            const filteredPosts = posts.filter(post => post.message_title.toLowerCase().includes(searchTerm));
-            displayPosts(filteredPosts);
-
+            filterPosts(event.target.value)
         });
+
+        function filterPosts(query) {
+            const searchTerm = query.toLowerCase();
+            const filteredPosts = posts.filter(post => (post.channel_id == activeChannel || activeChannel == -1) && (post.message_title.toLowerCase().includes(searchTerm) || post.message_text.toLowerCase().includes(searchTerm) || post.author.toLowerCase().includes(searchTerm)));
+            displayPosts(filteredPosts);
+        }
 
         function postComment(postTitle) {
             const commentText = document.getElementById('commentText').value;
