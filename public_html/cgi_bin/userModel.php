@@ -166,6 +166,71 @@
         }
 
     }
+
+    public function getBoardMembers($boardID){
+        include('db_connect.php');
+        // SQL statement
+        $stmt = $conn->prepare("SELECT * FROM board_users WHERE board_id = ?");
+
+        // Bind parameters
+        $stmt->bind_param("i", $boardID);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $conn->close();
+        return $rows;
+    }
+
+    public function getChannelMembers($channelname){
+        include('db_connect.php');
+        include('boardModel.php');
+        // get channelID
+        $boardModel = new boardModel();
+        $channelID = $boardModel->getChannelIDFromName($channelname);
+
+        // SQL statement
+        $stmt = $conn->prepare("SELECT * FROM channel_users WHERE channel_id = ?");
+
+        // Bind parameters
+        $stmt->bind_param("i", $channelID);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $conn->close();
+        return $rows;
+    }
+
+    public function getUsername($userID){
+        include('db_connect.php');
+
+        $stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
+
+        // Bind parameters
+        $stmt->bind_param("i", $userID);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+
+        $row = $result->fetch_assoc();
+
+        $user = $row['user'];
+
+        return $user;
+
+    }
         
 }
 
