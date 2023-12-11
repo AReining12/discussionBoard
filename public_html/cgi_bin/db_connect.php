@@ -9,6 +9,7 @@
 // $dbusername = 'root'; 
 // $dbpassword = ''; 
 
+// SOCS
 $host = 'mysql.cs.mcgill.ca';
 $dbname = '2023fall-comp307-mlavre1';
 $dbusername = 'mlavre1'; 
