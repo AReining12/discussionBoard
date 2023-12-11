@@ -88,11 +88,40 @@ class Connection {
     async setBoard(id) {
         enforceTypes(id, "number")
         let data = await Connection.ajax("../cgi_bin/boardController.php", {action: "set_board", board_id: id})
-        enforceTypes(data, "object", data.success, "boolean", data.message, "string")
+        enforceTypes(data, "object", data.success, "boolean", data.message, "string", data.status, "number")
+        return data
+    }
+
+    async getBoardMessages() {
+        let data = await Connection.ajax("../cgi_bin/messageController.php", {action: "get_messages"})
+        enforceTypes(data, "object", data.success, "boolean", data.message, "string", data.data, "object")
         if (!data.success) {
             throw new Error(data.message)
         }
-        return data.message
+        return Object.values(data.data)
+    }
+
+    async getChannels() {
+        let data = await Connection.ajax("../cgi_bin/boardController.php", {action: "get_channels"})
+        enforceTypes(data, "object", data.success, "boolean", data.status, "number", data.data, "object")
+        if (!data.success) {
+            throw new Error("Action failed with error code " + data.status)
+        }
+        return Object.values(data.data)
+    }
+
+    async sendMessage(title, content, channel) {
+        enforceTypes(title, "string", content, "string", channel, "number")
+        let data = await Connection.ajax("../cgi_bin/messageController.php", {action: "send_message", 'title':title, 'content':content, 'channel':channel})
+        enforceTypes(data, "object", data.success, "boolean", data.status, "number")
+        if (!data.success) {
+            let errorText = "Action failed with error code " + data.status
+            if (data.status == 7) {
+                errorText = "Unauthorized access to channel id " + channel
+            }
+            throw new Error(errorText)
+        }
+        return data.status
     }
 
     static async connect() {

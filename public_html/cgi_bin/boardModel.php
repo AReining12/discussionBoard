@@ -379,13 +379,13 @@ class boardModel {
         return $rows;
     }
 
-    public function getUserChannels($boardID, $userID){
+    public function getUserChannels($username, $boardID){
         include('db_connect.php');
         // SQL statement
-        $stmt = $conn->prepare("SELECT * FROM channel_users WHERE user_id = ?");
+        $stmt = $conn->prepare("SELECT channel_id, channel_name FROM user_boards WHERE user = ? AND board_id = ?");
 
         // Bind parameters
-        $stmt->bind_param("i", $userID);
+        $stmt->bind_param("si", $username, $boardID);
 
         // Execute the query
         $stmt->execute();

@@ -45,6 +45,7 @@ CREATE TABLE channels (
 
 CREATE TABLE messages (
     message_id int NOT NULL AUTO_INCREMENT,
+    message_title varchar(64) NOT NULL,
     message_text varchar(65535) NOT NULL,
     message_time datetime NOT NULL DEFAULT current_timestamp(),
     user_id int NOT NULL,
@@ -112,11 +113,18 @@ INNER JOIN users ON users.user_id=channel_users.user_id
 INNER JOIN groups ON users.group_id=groups.group_id;
 
 CREATE VIEW channel_messages AS
-SELECT channels.channel_id, users.user, messages.message_text, messages.message_time
+SELECT channels.board_id, channels.channel_id, channels.channel_name, users.user, messages.message_title, messages.message_text, messages.message_time
 FROM messages
 INNER JOIN channels ON messages.channel_id=channels.channel_id
 INNER JOIN users ON messages.user_id=users.user_id
-ORDER BY messages.message_time ASC;
+ORDER BY messages.message_time DESC;
+
+CREATE VIEW visible_messages AS
+SELECT users.user, channel_messages.board_id, channel_messages.channel_id, channel_messages.channel_name, channel_messages.user AS author, channel_messages.message_title, channel_messages.message_text, channel_messages.message_time
+FROM channel_messages
+INNER JOIN channel_users ON channel_users.channel_id=channel_messages.channel_id
+INNER JOIN users ON users.user_id=channel_users.user_id
+ORDER BY channel_messages.message_time DESC;
 
 CREATE VIEW user_boards AS
 SELECT users.user, boards.board_id, boards.board_name, board_users.is_board_admin, channels.channel_id, channels.channel_name
@@ -165,7 +173,7 @@ BEGIN
             board_id,
             1
         );
-        RETURN createChannel(user, board_id, 'announcements');
+        RETURN createChannel(user, board_id, 'Announcements');
     ELSE
         RETURN 3;
     END IF;
@@ -198,15 +206,15 @@ BEGIN
     END IF;
 END //
 
-CREATE FUNCTION sendMessage(user VARCHAR(64), channel_id INT, message_text VARCHAR(65535)) RETURNS INT
+CREATE FUNCTION sendMessage(user VARCHAR(64), channel_id INT, message_text VARCHAR(65535), message_title VARCHAR(64)) RETURNS INT
 BEGIN
     DECLARE user_id INT;
     SELECT users.user_id FROM users
     INNER JOIN channel_users ON users.user_id=channel_users.user_id
     WHERE users.user=user AND channel_users.channel_id=channel_id INTO user_id;
     IF user_id IS NOT NULL THEN
-        INSERT INTO messages (`message_text`, `user_id`, `channel_id`) VALUES
-        (message_text, user_id, channel_id);
+        INSERT INTO messages (`message_title`, `message_text`, `user_id`, `channel_id`) VALUES
+        (message_title, message_text, user_id, channel_id);
         RETURN 0;
     ELSE
         RETURN 7;
@@ -378,11 +386,11 @@ INSERT INTO users (user, pass, first_name, last_name, email, group_id) VALUES
 ('johnsmith', 'abcde', 'John', 'Smith', 'johnsmith@gmail.com', 3),
 ('janesmith', 'edcba', 'Jane', 'Smith', 'janesmith@gmail.com', 4);
 
-INSERT INTO messages (message_text, message_time, user_id, channel_id) VALUES
-('top secret grading things', '2023-11-13 08:23:46', 1, 1),
-('i love administrating', '2023-11-15 12:13:46', 4, 2),
-('im gonna plan the biggest party ever', '2023-11-16 16:20:34', 2, 3),
-('i love this school!', '2023-11-17 10:02:28', 3, 4);
+INSERT INTO messages (message_title, message_text, message_time, user_id, channel_id) VALUES
+('Fall 2023', 'top secret grading things', '2023-11-13 08:23:46', 1, 1),
+('PSA', 'i love administrating', '2023-11-21 12:13:46', 4, 2),
+('This weekend', 'im gonna plan the biggest party ever', '2023-11-30 16:20:34', 2, 3),
+('What a day!', 'i love this school!', '2023-12-05 10:02:28', 3, 4);
 
 INSERT INTO board_users (user_id, board_id, is_board_admin) VALUES
 (1, 1, 0),

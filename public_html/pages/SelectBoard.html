@@ -69,12 +69,20 @@
 
         .welcome {
             min-height: 95vh; /* Full viewport height */
-            background-image: url('../asserts/images/welcome.jpg');
+            background: 
+                linear-gradient(
+                to top,
+                rgba(200, 200, 255, 0),
+                rgba(0, 0, 100, 0.4)
+                ),
+                url('../asserts/images/welcome.jpg');
             background-size: cover; 
             position: relative; /* 使绝对定位的子元素（如 .logout）相对于此元素定位 */
         }
 
         .welcome-text{
+            margin-top: 1rem;
+            font-family: Tahoma, Arial, sans-serif;
             font-weight: bold; 
             text-align: center; 
             color: white; 
@@ -437,8 +445,9 @@
         // sets session variables for course selection
         function setBoard(boardID) {
             connection.setBoard(boardID).then(result => {
-                console.log(result)
-                window.location.href = `DiscussionBoard.html?course=${encodeURIComponent(boardID)}`;
+                if (result.status != 2) {
+                    window.location.href = `DiscussionBoard.html?course=${encodeURIComponent(boardID)}`;
+                }
             })
         }
         
