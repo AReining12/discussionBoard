@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS messages;
 CREATE TABLE messages (
     message_id int NOT NULL AUTO_INCREMENT,
     message_title varchar(64) NOT NULL,
-    message_text varchar(65532) NOT NULL,
+    message_text varchar(32768) NOT NULL,
     message_time datetime NOT NULL DEFAULT current_timestamp(),
     user_id int NOT NULL,
     channel_id int NOT NULL,
@@ -225,7 +225,7 @@ BEGIN
 END //
 
 DROP FUNCTION IF EXISTS sendMessage//
-CREATE FUNCTION sendMessage(user VARCHAR(64), channel_id INT, message_text VARCHAR(65532), message_title VARCHAR(64)) RETURNS INT
+CREATE FUNCTION sendMessage(user VARCHAR(64), channel_id INT, message_text VARCHAR(32768), message_title VARCHAR(64)) RETURNS INT
 BEGIN
     DECLARE user_id INT;
     SELECT users.user_id FROM users
