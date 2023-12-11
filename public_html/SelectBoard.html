@@ -181,7 +181,6 @@
                 <div class="sidebar-link" id="createCourse">Create a Course</div>
                 <div class="sidebar-link" id="deleteCourse">Delete a Course</div>
                 <div class="sidebar-link" id="administrateBoards" style="display: none;">Administrate Boards</div>
-                <div class="sidebar-link" id="deleteBoardMembers" style="display: none;">Delete Board Members</div>
 
             </div>
 
@@ -245,13 +244,7 @@
                         <div id="adminBoardsList"></div>
                     </div>
 
-                    <!-- board admin for deleting board members -->
-                    <div id="deleteBoardMemberSection" style="display: none;">
-                        <h2>Delete Board Members</h2>
-                        <div id="boardMembersContent">
-                            <!-- 成员列表和删除按钮将在这里动态生成 -->
-                        </div>
-                    </div>
+
 
 
 
@@ -305,8 +298,8 @@
 
         document.getElementsByClassName("search-button")[0].addEventListener("click", function () {
             let query = document.getElementsByClassName("search-box")[0].value;
+            // Check if the search query is empty after trimming white spaces
             if (query.trim() === '') {
-                // 如果没有输入，不执行搜索
                 alert('Please enter a search term.');
                 return;
             }
@@ -335,43 +328,44 @@
                 row += '</div>';
                 resultContent.innerHTML = row;
 
-                // 为每个加入按钮添加事件监听器
+                // Adding event listeners to all join course buttons
                 addJoinCourseListeners();
             })
                 .catch(error => console.error('Error:', error));
         });
 
-        // 为加入课程按钮添加事件监听器的函数
+        // Function to add event listeners to join course buttons
         function addJoinCourseListeners() {
+            // Select all elements with the class 'join-course-btn'
             document.querySelectorAll('.join-course-btn').forEach(button => {
-                console.log('Adding listener to button', button); // 调试语句
-                button.addEventListener('click', function () {
+                console.log('Adding listener to button', button);
+                button.addEventListener('click', function () { // Add a click event listener to each button
                     const boardId = this.getAttribute('data-boardid');
-                    console.log('Join button clicked for board ID:', boardId); // 调试语句
+                    console.log('Join button clicked for board ID:', boardId);
                     joinCourse(boardId);
                 });
             });
         }
 
 
-        // 加入课程的函数
+        // Function to join a course (board)
         function joinCourse(boardId) {
-            console.log('Attempting to join board with ID:', boardId); // 调试语句
-            fetch('../cgi_bin/joinCourse.php', { // 确保路径是正确的
+            console.log('Attempting to join board with ID:', boardId); // Debug statement: logging the board ID
+            fetch('../cgi_bin/joinCourse.php', {
                 method: 'POST',
-                body: JSON.stringify({ boardId: boardId }),
+                body: JSON.stringify({ boardId: boardId }),// Sending boardId in the request body
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json'// Set the content type to JSON
                 }
             })
-                .then(response => response.text()) // 先获取文本内容
+                .then(response => response.text()) // First, get the text content of the response
                 .then(text => {
-                    console.log("Received raw response:", text); // 打印原始响应文本
-                    return JSON.parse(text); // 尝试解析文本为JSON
+                    console.log("Received raw response:", text); // Debug statement: log the raw response text
+                    return JSON.parse(text); // parse the text as JSON
                 })
                 .then(data => {
                     if (data.success) {
-                        alert('Request to join course sent successfully.');
+                        alert('Request to join course sent successfully.'); //Notify the user of successful request submission
                     } else {
                         alert('Failed to send request: ' + data.error);
                     }
@@ -383,6 +377,9 @@
 
 
         function loadAdminBoards() {
+
+            console.log(document.getElementById('adminBoardsList'));
+
             fetch('../cgi_bin/listAdminBoards.php')
                 .then(response => response.json())
                 .then(data => {
@@ -478,7 +475,6 @@
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
-            document.getElementById('deleteBoardMemberSection').style.display = 'none';
 
         });
 
@@ -491,7 +487,6 @@
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
-            document.getElementById('deleteBoardMemberSection').style.display = 'none';
 
             // 重置搜索框和清除搜索结果
             document.getElementsByClassName("search-box")[0].value = '';
@@ -506,7 +501,6 @@
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
-            document.getElementById('deleteBoardMemberSection').style.display = 'none';
 
         });
 
@@ -517,7 +511,6 @@
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
-            document.getElementById('deleteBoardMemberSection').style.display = 'none';
 
         });
 
@@ -528,7 +521,6 @@
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
-            document.getElementById('deleteBoardMemberSection').style.display = 'none';
 
 
 
@@ -536,19 +528,7 @@
             loadAndDisplayCourses();
         });
 
-        document.getElementById('deleteBoardMembers').addEventListener('click', function() {
-            // 清除其他部分的显示
-            document.getElementById('deleteBoardMemberSection').style.display = 'block';
-            document.getElementById('myCoursesContent').style.display = 'none';
-            document.getElementById('searchCoursesSection').style.display = 'none';
-            document.getElementById('createCourseSection').style.display = 'none';
-            document.getElementById('welcomeSection').style.display = 'none';
-            document.getElementById('deleteCourseSection').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
 
-            // 加载并显示成员列表
-            loadBoardMembers();
-        });
 
         function addBoardListener() {
             // Add event listener to each course link
@@ -603,26 +583,24 @@
         } 
 
         // When the page loads
-        // 当页面加载时
         document.addEventListener('DOMContentLoaded', async function() {
-            // 解析 URL 参数
+            // Parse the URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const courseSection = urlParams.get('course');
 
             if (courseSection) {
-                // 显示特定课程的信息
+                // Display information for a specific course
                 document.getElementById('contentArea').innerHTML = `<h3>Discussion Board for ${decodeURIComponent(courseSection)}</h3>`;
-                // 加载课程信息
-                // ... 加载课程信息的代码 ...
+                // Load course information
+                // Further logic to load posts for the course can be added here
             }
 
             try {
-                // 检查用户是否为管理员
+                // Check if the user is an admin
                 const isAdmin = await checkIfUserIsAdmin();
                 if (isAdmin) {
-                    // 如果是管理员，显示管理板块的链接并加载管理板块
+                    // If the user is an admin, show the link to manage boards and load the boards
                     document.getElementById('administrateBoards').style.display = 'block';
-                    document.getElementById('deleteBoardMembers').style.display = 'block';
                     loadAdminBoards();
                 }
             } catch (error) {
@@ -630,7 +608,7 @@
             }
         });
 
-        // 检查用户是否为任何讨论板的管理员
+        // check if the user is admin of any board
         async function checkIfUserIsAdmin() {
             try {
                 const response = await fetch('../cgi_bin/listAdminBoards.php');
@@ -643,23 +621,28 @@
         }
 
 
-
-
-
+        
         function loadBoardApplicants(boardId) {
             fetch(`../cgi_bin/getBoardApplicants.php?boardId=${boardId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        let applicantsHtml = '<ul>';
-                        data.applicants.forEach(applicant => {
-                            applicantsHtml += `<li>${applicant.user} (${applicant.email})
-                                   <button onclick="approveApplicant(${applicant.user_id}, ${boardId})">Approve</button>
-                                   <button onclick="rejectApplicant(${applicant.user_id}, ${boardId})">Reject</button>
-                                   </li>`;
-                        });
-                        applicantsHtml += '</ul>';
-                        document.getElementById('adminBoardsList').innerHTML = applicantsHtml;
+                        // Check if there are any applicants
+                        if (data.applicants.length > 0) {
+                            let applicantsHtml = '<ul>';
+                            data.applicants.forEach(applicant => {
+                                // Construct HTML for each applicant
+                                applicantsHtml += `<li>${applicant.user} (${applicant.email})
+                               <button onclick="approveApplicant(${applicant.user_id}, ${boardId})">Approve</button>
+                               <button onclick="rejectApplicant(${applicant.user_id}, ${boardId})">Reject</button>
+                               </li>`;
+                            });
+                            applicantsHtml += '</ul>';
+                            document.getElementById('adminBoardsList').innerHTML = applicantsHtml;
+                        } else {
+                            // If no applicants, show an alert
+                            alert('No applicants for this course.');
+                        }
                     } else {
                         alert('Failed to load applicants: ' + data.error);
                     }
@@ -669,32 +652,32 @@
                 });
         }
 
-
         // Event listener for 'Administrate Boards' sidebar link
         document.getElementById('administrateBoards').addEventListener('click', function() {
             document.getElementById('adminSection').style.display = 'block';
-            // 隐藏其他部分
+            // Hide other sections
             document.getElementById('myCoursesContent').style.display = 'none';
             document.getElementById('searchCoursesSection').style.display = 'none';
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
-            document.getElementById('deleteBoardMemberSection').style.display = 'none';
 
             loadAdminBoards();
         });
 
+
+        // Function to approve an applicant
         function approveApplicant(userId, boardId) {
             fetch(`../cgi_bin/approveApplicant.php?userId=${userId}&boardId=${boardId}`)
-                .then(response => response.text()) // 先获取文本内容
+                .then(response => response.text()) // First, get the text content
                 .then(text => {
-                    console.log("Received raw response:", text); // 打印原始响应文本
-                    return JSON.parse(text); // 尝试解析文本为 JSON
+                    console.log("Received raw response:", text); // Print the raw response text
+                    return JSON.parse(text); // Attempt to parse the text as JSON
                 })
                 .then(data => {
                     if (data.success) {
                         alert('Applicant approved successfully.');
-                        loadBoardApplicants(boardId); // 重新加载申请者列表
+                        loadBoardApplicants(boardId); // Reload the applicants list to reflect changes.
                     } else {
                         alert('Failed to approve applicant: ' + data.error);
                     }
@@ -702,14 +685,14 @@
                 .catch(error => console.error('Error:', error));
         }
 
-
+        // Function to reject an applicant
         function rejectApplicant(userId, boardId) {
             fetch(`../cgi_bin/rejectApplicant.php?userId=${userId}&boardId=${boardId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         alert('Applicant rejected successfully.');
-                        loadBoardApplicants(boardId); // 重新加载申请者列表
+                        loadBoardApplicants(boardId); // Reload the applicants list to reflect changes
                     } else {
                         alert('Failed to reject applicant: ' + data.error);
                     }
@@ -718,52 +701,7 @@
         }
 
 
-        function loadBoardMembers() {
-            // 示例：假设您有一个元素来显示成员列表
-            let boardMembersContent = document.getElementById('boardMembersContent');
-            boardMembersContent.innerHTML = ''; // 清空现有内容
-            boardMembersContent.style.display = 'block'; // 显示该部分
-
-            // 发送请求获取成员列表
-            fetch('../cgi_bin/listBoardMembers.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // 生成成员列表的 HTML
-                        let membersHtml = '<ul>';
-                        data.members.forEach(member => {
-                            membersHtml += `<li>${member.username} (${member.email})
-                        <button onclick="deleteBoardMember(${member.id})">Delete</button>
-                    </li>`;
-                        });
-                        membersHtml += '</ul>';
-                        boardMembersContent.innerHTML = membersHtml;
-                    } else {
-                        alert('Failed to load board members: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading board members:', error);
-                    boardMembersContent.innerHTML = '<p>Error loading board members.</p>';
-                });
-        }
-
-        // delete a Board Member
-        function deleteBoardMember(memberId) {
-            // 发送删除请求到服务器
-            fetch(`../cgi_bin/deleteBoardMember.php?memberId=${memberId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Member deleted successfully.');
-                        loadBoardMembers(); // 重新加载成员列表
-                    } else {
-                        alert('Failed to delete member: ' + data.error);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
+        
 
 
     </script>
