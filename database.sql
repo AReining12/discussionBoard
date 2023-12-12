@@ -279,8 +279,8 @@ BEGIN
         SELECT board_applicants.user_id FROM board_applicants
         WHERE board_applicants.user_id=user_id AND board_applicants.board_id=board_id
     ) THEN
-        INSERT INTO board_users (`user_id`, `board_id`) VALUES
-        (user_id, board_id);
+        INSERT INTO board_users (`user_id`, `board_id`, `is_board_admin`) VALUES
+        (user_id, board_id, 0);
         INSERT INTO channel_users (`user_id`, `channel_id`)
             SELECT user_id, channels.channel_id FROM channels
             WHERE channels.board_id=board_id;
