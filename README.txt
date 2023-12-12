@@ -6,7 +6,7 @@ Anna Reining:
     - handled most backend related to landingpage, login, registration, and discussion board, except for AJAX requests
     - contributed to request to join course function in SelectBoard
 - Frontend
-    - Handled most frontend and backend for manage members, manage channels, manage channel members buttons, view waiting list functions
+    - Handled some frontend for manage members, manage channels, manage channel members buttons, view waiting list functions
 
 Junji Duan:
 - Fronted
