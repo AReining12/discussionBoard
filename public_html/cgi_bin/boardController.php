@@ -51,7 +51,6 @@ class boardController {
         $userModel = new userModel();
 
         // Get userID from username
-        $userID = $userModel->getUserID($username);
         
         if ($action == 'addMember'){
             // call addMember
@@ -66,12 +65,11 @@ class boardController {
         exit();
     }
 
-    public function addMember($boardID, $username){
+    public function addMember($username, $boardID){
         $userModel = new userModel();
 
 
         // Get userID from username
-        $userID = $userModel->getUserID($username);
 
         $boardModel = new boardModel();
         $boardModel->addMember($username, $boardID);
@@ -118,7 +116,6 @@ class boardController {
 
 
         // Get userID from username
-        $userID = $userModel->getUserID($username);
 
         $boardModel = new boardModel();
         $boardModel->removeMember($username, $boardID);
