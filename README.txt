@@ -3,7 +3,8 @@ Link: https://cs.mcgill.ca/~mlavre1/
 Members and responsibilities:
 Anna Reining:
 - Backend
-    - handled most backend related to landingpage, login, registration, and DiscussionBoard pages, except for AJAX requests and the search function
+    - handled most backend related to landingpage, login, registration, and DiscussionBoard pages (ie boardController/Model, userController/model, messageController/model; and the forms in: manageMembers, manageChannels, manageChannelMembers, waitlist)
+    - did NOT write AJAX requests or the search function (and a couple others)
     - contributed to request to join course function in SelectBoard
 - Frontend
     - Handled some frontend for manage members, manage channels, manage channel members buttons, view waiting list functions
