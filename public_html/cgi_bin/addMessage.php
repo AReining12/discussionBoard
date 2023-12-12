@@ -2,7 +2,7 @@
     <head>
     </head>
     <body>
-    <!--Form to add or remove channels-->
+    <!--Form to add or remove channels, Anna Reining, 260885420-->
     <form name="input" action="messageController.php" method="post" autocomplete="on">
             <!--Hidden field to determine whether form is register or login-->
             <input type="hidden" name="action" value="add_message">
