@@ -459,10 +459,7 @@
             }
 
             if (!isValidUser) {
-                welcomeTextDiv.innerHTML = "<h3>You must be a member of this board to view the content</h3><div id='join' style='width:100%'>Request to join</div>"
-                document.getElementById("join").addEventListener('click', function () {
-                    alert('Application denied')
-                })
+                welcomeTextDiv.innerHTML = "<h3>You must be a member of this board to view the content</h3>"
                 return
             }
 
