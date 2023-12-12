@@ -198,7 +198,7 @@ include('boardController.php');
                     <div class="create" id="createCourseSection">
                         <div class="create-course-container" style="text-align: center;">
                             <!-- Course Creation Form -->
-                           <!-- Form to add or remove channels -->
+                           <!-- Form to remove member, Anna Reining, 260885420-->
                             <form name="removeMemberFromChannelForm" action="boardController.php" method="post" autocomplete="on">
                                 <!--Hidden field to determine whether form is register or login-->
                                 <input type="hidden" name="action" value="add_member_to_channel">
