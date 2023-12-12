@@ -594,17 +594,10 @@
                         let content = document.getElementById('postContent')
                         let channel = document.getElementById('postVisibility')
                         connection.sendMessage(title.value, content.value, parseInt(channel.value)).then(function () { 
-                            connection.getBoardMessages().then(newPosts => {
-                                posts = newPosts
-                                displayPosts()
-                                Object.values(document.getElementsByClassName('sidebar-link')).forEach(link => {
-                                    if (link.innerHTML === title.value) {
-                                        link.click()
-                                    }
-                                })
-                                title.value = ""
-                                content.value = ""
-                            })
+                            let postTitle = title.value;
+                            title.value = ""
+                            content.value = ""
+                            refreshPosts(postTitle)
                         }).catch(error => {
                             console.error(error)
                         })
@@ -618,21 +611,38 @@
             const postList = document.querySelector('.post-list');
             postList.innerHTML = ''; // Clear existing posts
     
+            let threads = []
             filteredPosts.forEach(post => {
+                let exists = false
+                threads.forEach(thread => {
+                    if (post.message_title == thread[0].message_title && post.channel_id == thread[0].channel_id) {
+                        thread.unshift(post)
+                        exists = true
+                    }
+                })
+                if (!exists) {
+                    threads.push([post])
+                }
+            })
+
+            threads.forEach(thread => {
                 const postElement = document.createElement('div');
                 postElement.classList.add('sidebar-link');
-                postElement.textContent = post.message_title //post.title;
-                postElement.onclick = () => displayPostContent(post);
+                postElement.textContent = thread[0].message_title //post.title;
+                postElement.onclick = () => displayPostContent(thread);
                 postList.appendChild(postElement);
             });
 
         }
     
         // Function to display post content
-        function displayPostContent(post) {
+        function displayPostContent(posts) {
             const contentArea = document.getElementById('postDisplayArea');
 //            const postContent = `<h3>${post.title}</h3><p>${post.content}</p>`;
-            const postContent = `<h3 style="margin: 0.5em 0">${post.message_title} <span class='channel' style='background-color: hsl(` + ((post.channel_id*130)%360) + `,100%,75%)'>${post.channel_name}</span></h3><h5>${post.author}  <span class='group'>${post.group_name}</span> <span class="time">` + legibleTime(new Date() - new Date(post.message_time)) + ` ago</span></h5><p>${post.message_text}</p>`;
+            let postContent = `<h3 style="margin: 0.5em 0">${posts[0].message_title} <span class='channel' style='background-color: hsl(` + ((posts[0].channel_id*130)%360) + `,100%,75%)'>${posts[0].channel_name}</span></h3>`
+            posts.forEach(post => {
+                postContent += `<h5>${post.author} <span class='group'>${post.group_name}</span> <span class="time">` + legibleTime(new Date() - new Date(post.message_time)) + ` ago</span></h5><p>${post.message_text}</p>`;
+            })
             
             // Add a textarea for comments
             const commentSection = `
@@ -645,10 +655,10 @@
             // Replace existing content in contentArea with the new post content
             contentArea.innerHTML = postContent + commentSection;
 
-        // Add event listener to the Post Comment button
-        document.getElementById('postComment').addEventListener('click', function() {
-            postComment(post.title); // You might want to pass an identifier for the post
-        });
+            // Add event listener to the Post Comment button
+            document.getElementById('postComment').addEventListener('click', function() {
+                postComment(posts[0].message_title, posts[0].channel_id); // You might want to pass an identifier for the post
+            });
 
             // Hide 'Make a Post' form section
             const makepostSection = document.getElementById('makepostSection');
@@ -676,13 +686,29 @@
             displayPosts(filteredPosts);
         }
 
-        function postComment(postTitle) {
+        function postComment(postTitle, channel_id) {
             const commentText = document.getElementById('commentText').value;
             // Logic to handle the comment post
             // For example, send the comment to your server and then update the UI
-            console.log("Comment on post", postTitle, ":", commentText);
+            //console.log("Comment on post", postTitle, ":", commentText);
+            connection.sendMessage(postTitle, commentText, channel_id).then(status => {
+                refreshPost(postTitle)
+            })
+
             // Clear the comment textarea after posting
             document.getElementById('commentText').value = '';
+        }
+
+        function refreshPost(postTitle) {
+            connection.getBoardMessages().then(newPosts => {
+            posts = newPosts
+            displayPosts()
+            Object.values(document.getElementsByClassName('sidebar-link')).forEach(link => {
+                if (link.innerHTML === postTitle) {
+                    link.click()
+                }
+            })
+        })
         }
 
     </script>
