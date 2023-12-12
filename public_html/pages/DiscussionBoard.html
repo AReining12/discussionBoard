@@ -444,10 +444,17 @@
             // <h1>Discussion Board for ${courseName}</h1>
             welcomeTextDiv.innerHTML = `
             <h1>Discussion Board for ${courseName}</h1>
+            <div class="manage-buttons">
+                <button class="btn btn-primary" id="manageMembersBtn" onclick="window.location.href='../cgi_bin/manageMembers.php'">Manage Members</button>
+                <button class="btn btn-primary" id="manageChannelsBtn" onclick="window.location.href='../cgi_bin/manageChannels.php'">Manage Channels</button>
+                <button class="btn btn-primary" id="manageChannelMembersBtn" onclick="window.location.href='../cgi_bin/manageChannelMembers.php'">Manage Channel Members</button>
+
+            </div>
             `;
 
             // Append the text container to the welcome section
             welcomeSection.appendChild(welcomeTextDiv);
+
 
             // Add the welcome section to the content area
             const contentArea = document.getElementById('contentArea');
@@ -553,6 +560,8 @@
             }
 
         });
+
+        
 
         document.getElementById('viewwaitinglist').addEventListener('click', function() {
             const welcomeSection = document.getElementById('welcomeSection');
