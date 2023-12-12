@@ -83,6 +83,36 @@ class boardController {
         exit;
     }
 
+    public function approveMember($username, $boardID){
+        $curBoardName = $_SESSION['boardname'];
+
+        $boardModel = new boardModel();
+        $curBoardID = $boardModel->getBoardID($curBoardName);
+
+        $boardModel->approveMember($username, $boardID);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($curBoardID);
+
+        // Redirect
+        header("Location: " . $redirectUrl);
+        exit;
+    }
+
+    public function rejectMember($username, $boardID){
+        $curBoardName = $_SESSION['boardname'];
+
+        $boardModel = new boardModel();
+        $curBoardID = $boardModel->getBoardID($curBoardName);
+
+        $boardModel->rejectMember($username, $boardID);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($curBoardID);
+
+        // Redirect
+        header("Location: " . $redirectUrl);
+        exit;
+    }
+
     public function removeMember($boardID, $username){
         $userModel = new userModel();
 
@@ -391,8 +421,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $boardModel->approveMember($username, $boardID);
                 break;
 
+            case 'accept_request':
+                // get board id, username
+                $boardID = $_SESSION['boardID'];
 
-                
+                // get user name
+                $username = $_POST['name'];
+
+                $boardController = new boardController();
+                $boardController->approveMember($username, $boardID);
+                break;
+
+            case 'reject_request':
+                // get board id, username
+                $boardID = $_SESSION['boardID'];
+
+                // get user name
+                $username = $_POST['name'];
+
+                $boardController = new boardController();
+                $boardController->rejectMember($username, $boardID);
+                break;
+
+            default:
+                echo("Error 403: Forbidden");
+                break;
         }
     } else if ($ajax) {
         $request = json_decode($ajax);
