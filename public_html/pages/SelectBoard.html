@@ -504,7 +504,7 @@
             // After deletion, reload the courses list
             connection.deleteBoard(courseId).then(status => {
                 if (status != 0) {
-                    alert("Only staff can delete boards");
+                    alert("Only admin can delete boards");
                     //console.error("Error #" + status + ": Could not delete board")
                 }
             })
