@@ -9,11 +9,7 @@ $dbname = 'comp307';
 $dbusername = 'root'; 
 $dbpassword = ''; 
 
-// SOCS
-// $host = 'mysql.cs.mcgill.ca';
-// $dbname = '2023fall-comp307-mlavre1';
-// $dbusername = 'mlavre1'; 
-// $dbpassword = '4zWW$f#5XR@FFdJgwX6h3ihd'; 
+
 
 // Create connection
 $conn = new mysqli($host, $dbusername, $dbpassword, $dbname);
