@@ -9,9 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // get data
         $username = $_POST['login_username'];
         $password = $_POST['login_password'];
-        echo "$username";
-        //echo "password";
-        echo "$password";
+        // echo "$username";
+        // echo "$password";
     
         // instance of UserController
         $userController = new userController();

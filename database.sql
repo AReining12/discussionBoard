@@ -381,10 +381,10 @@ INSERT INTO groups (group_name, is_staff) VALUES
 ('Admin', 1);
 
 INSERT INTO users (user, pass, first_name, last_name, email, group_id) VALUES
-('johndoe', '12345', 'John', 'Doe', 'johndoe@gmail.com', 1),
-('janedoe', '54321', 'Jane', 'Doe', 'janedoe@gmail.com', 2),
-('johnsmith', 'abcde', 'John', 'Smith', 'johnsmith@gmail.com', 3),
-('janesmith', 'edcba', 'Jane', 'Smith', 'janesmith@gmail.com', 4);
+('johndoe', '$2a$12$kudlGBCLA7Z0HbJvqOnGhekobTnbuXi2A2G.jH4jyQmsJYorcuuy2', 'John', 'Doe', 'johndoe@gmail.com', 1),         -- 12345
+('janedoe', '$2a$12$CfxPsLylZWMZZvkKkEcNeOsvphihyRpzPrQeWdKU6WNmcQG9QwiPO', 'Jane', 'Doe', 'janedoe@gmail.com', 2),         -- 54321
+('johnsmith', '$2a$12$Gfj.qVtKy8tFjKCh77TIIe.kjg34vhDPquoueUJYG5k94i5imBWEG', 'John', 'Smith', 'johnsmith@gmail.com', 3),   -- abcde
+('janesmith', '$2a$12$.ra66Y.JMfmDQjEtrmcht.joFIv41RLY35KNPCtA5dqZZTMxxe2ie', 'Jane', 'Smith', 'janesmith@gmail.com', 4);   -- edcba
 
 INSERT INTO messages (message_title, message_text, message_time, user_id, channel_id) VALUES
 ('Fall 2023', 'top secret grading things', '2023-11-13 08:23:46', 1, 1),

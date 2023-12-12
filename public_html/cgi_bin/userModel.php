@@ -48,10 +48,10 @@
             require_once('session_start.php');
             include('db_connect.php');
             // SQL statement
-            $stmt = $conn->prepare("SELECT * FROM users WHERE user = ? AND pass = ?");
+            $stmt = $conn->prepare("SELECT * FROM users WHERE user = ?");
 
             // Bind parameters
-            $stmt->bind_param("ss", $username, $password);
+            $stmt->bind_param("s", $username);
 
             // Execute the query
             $stmt->execute();
@@ -59,25 +59,22 @@
             // Store the result
             $result = $stmt->get_result();
 
+            $valid = false; //User exists?
             if ($result->num_rows > 0) {
                 // User exists, set session vars
                 $row = $result->fetch_assoc();
-                $_SESSION['username'] = $row['user'];
-                $_SESSION['user_id'] = $row['user_id'];
-
-                // Close the statement and database connection
-                $stmt->close();
-                $conn->close();
-        
-                return true; // User exists
-            } else {
-                // User doesn't exist
-                // Close the statement and database connection
-                $stmt->close();
-                $conn->close();
-        
-                return false; // User doesn't exist
+                if (password_verify($password, $row['pass'])) {
+                    $_SESSION['username'] = $row['user'];
+                    $_SESSION['user_id'] = $row['user_id'];
+                    $valid = true;
+                }
             }
+
+            // Close the statement and database connection
+            $stmt->close();
+            $conn->close();
+        
+            return $valid;
 
     }
     public function getUserID($username) {
