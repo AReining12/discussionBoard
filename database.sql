@@ -1,4 +1,4 @@
-USE 2023fall-comp307-mlavre1;
+USE comp307; -- 2023fall-comp307-mlavre1;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 
@@ -125,15 +125,16 @@ INNER JOIN groups ON users.group_id=groups.group_id;
 
 DROP VIEW IF EXISTS channel_messages;
 CREATE VIEW channel_messages AS
-SELECT channels.board_id, channels.channel_id, channels.channel_name, users.user, messages.message_title, messages.message_text, messages.message_time
+SELECT channels.board_id, channels.channel_id, channels.channel_name, users.user, groups.group_name, messages.message_title, messages.message_text, messages.message_time
 FROM messages
 INNER JOIN channels ON messages.channel_id=channels.channel_id
 INNER JOIN users ON messages.user_id=users.user_id
+INNER JOIN groups ON users.group_id=groups.group_id
 ORDER BY messages.message_time DESC;
 
 DROP VIEW IF EXISTS visible_messages;
 CREATE VIEW visible_messages AS
-SELECT users.user, channel_messages.board_id, channel_messages.channel_id, channel_messages.channel_name, channel_messages.user AS author, channel_messages.message_title, channel_messages.message_text, channel_messages.message_time
+SELECT users.user, channel_messages.board_id, channel_messages.channel_id, channel_messages.channel_name, channel_messages.user AS author, channel_messages.group_name, channel_messages.message_title, channel_messages.message_text, channel_messages.message_time
 FROM channel_messages
 INNER JOIN channel_users ON channel_users.channel_id=channel_messages.channel_id
 INNER JOIN users ON users.user_id=channel_users.user_id
@@ -403,10 +404,10 @@ INSERT INTO channels (channel_name, board_id) VALUES
 ('general', 2);
 
 INSERT INTO groups (group_name, is_staff) VALUES
-('Prof', 1),
+('Professor', 1),
 ('TA', 1),
 ('Student', 0),
-('Admin', 1);
+('Other', 1);
 
 INSERT INTO users (user, pass, first_name, last_name, email, group_id) VALUES
 ('johndoe', '$2a$12$kudlGBCLA7Z0HbJvqOnGhekobTnbuXi2A2G.jH4jyQmsJYorcuuy2', 'John', 'Doe', 'johndoe@gmail.com', 1),         -- 12345

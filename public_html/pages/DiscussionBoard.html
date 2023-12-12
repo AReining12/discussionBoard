@@ -229,6 +229,13 @@
             cursor: pointer;
         }
 
+        .group {
+            background-color: gold;
+            border-radius: 1em;
+            font-size: 0.8em;
+            padding: 0.2em 0.5em;
+        }
+
     </style>
 
 </head>
@@ -625,7 +632,7 @@
         function displayPostContent(post) {
             const contentArea = document.getElementById('postDisplayArea');
 //            const postContent = `<h3>${post.title}</h3><p>${post.content}</p>`;
-            const postContent = `<h3 style="margin: 0.5em 0">${post.message_title} <span class='channel' style='background-color: hsl(` + ((post.channel_id*130)%360) + `,100%,75%)'>${post.channel_name}</span></h3><h5>${post.author} <span class="time">` + legibleTime(new Date() - new Date(post.message_time)) + ` ago</span></h5><p>${post.message_text}</p>`;
+            const postContent = `<h3 style="margin: 0.5em 0">${post.message_title} <span class='channel' style='background-color: hsl(` + ((post.channel_id*130)%360) + `,100%,75%)'>${post.channel_name}</span></h3><h5>${post.author}  <span class='group'>${post.group_name}</span> <span class="time">` + legibleTime(new Date() - new Date(post.message_time)) + ` ago</span></h5><p>${post.message_text}</p>`;
             
             // Add a textarea for comments
             const commentSection = `

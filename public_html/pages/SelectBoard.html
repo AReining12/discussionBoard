@@ -282,7 +282,8 @@
             let data = new FormData(event.target)
             connection.createBoard(data.get('courseName')).then(status => {
                 if (status != 0) {
-                    console.error("Error #" + status + ": Could not create board")
+                    alert("Only staff can create boards");
+                    //console.error("Error #" + status + ": Could not create board")
                 } else {
                     connection.getBoards().then(rows => {
                         let highest = 0
@@ -503,7 +504,8 @@
             // After deletion, reload the courses list
             connection.deleteBoard(courseId).then(status => {
                 if (status != 0) {
-                    console.error("Error #" + status + ": Could not delete board")
+                    alert("Only staff can delete boards");
+                    //console.error("Error #" + status + ": Could not delete board")
                 }
             })
             loadAndDisplayCourses();
@@ -528,10 +530,10 @@
             connection.addToWaitingList(courseId).then(status => {
                 switch (status) {
                     case 8:
-                        console.error("You're already on the board")
+                        alert("You're already on this board")
                         break;
                     case 9:
-                        console.error("You've already applied to the board")
+                        alert("You've already applied to this board")
                         break;
                 
                     default:
