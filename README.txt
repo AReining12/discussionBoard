@@ -9,7 +9,12 @@ Junji Duan:
       eg: Landing Page / registration page / select board page / discussion board page
     - Design visual part of the website
 Mingchen Ju:
-- Add your responsibilities here
+-Frontend
+    -HTML modifications(select board part)
+    -Implemented dynamic, asynchronous interactions with the backend(select board part) using JavaScript AJAX requests
+-Backend
+    -Developed PHP scripts for functionalities in the select board page
+    eg:join courses,managing board applicants,create and delete board(course), logout
 Mikhail Lavrenov:
 - Database
     - Design
