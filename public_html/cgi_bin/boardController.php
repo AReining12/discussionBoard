@@ -500,6 +500,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'status' => 1]);
                 }
                 break;
+        
+            case 'is_admin':
+                if (isset($request->board_id)) {
+                    $userModel = new userModel();
+                    $admin = $userModel->verifyAdmin($request->board_id);
+                    echo json_encode(['success' => true, 'admin' => $admin]);
+                } else {
+                    echo json_encode(['success' => false, 'admin' => false]);
+                }
+                break;
 
             
             default:

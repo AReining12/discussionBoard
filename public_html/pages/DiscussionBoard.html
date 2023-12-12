@@ -315,6 +315,7 @@
                 let id = parseInt(getUrlParameter('course'))
                 let found = false
                 let exists = false
+                let admin = false
                 let name = ""
                 user_boards.forEach(row => {
                     if (row.board_id == id) {
@@ -331,8 +332,10 @@
                             name = row.board_name
                         }
                     })
+                } else {
+                    admin = await connection.isAdmin(id)
                 }
-                handleCourseSpecificLogic(found, exists, name)
+                handleCourseSpecificLogic(found, exists, admin, name)
                 if (found) {
                     let result = await connection.setBoard(id)
                     if (!result.success) {
@@ -432,7 +435,7 @@
         }
         
         // Logic specific to handling course-related features
-        function handleCourseSpecificLogic(isValidUser, boardExists, courseName) {
+        function handleCourseSpecificLogic(isValidUser, boardExists, admin, courseName) {
             // Create a new element for the welcome section
             const welcomeSection = document.createElement('div');
             welcomeSection.id = 'welcomeSection';
@@ -467,6 +470,10 @@
 
             if (!isValidUser) {
                 welcomeTextDiv.innerHTML = "<h3>You must be a member of this board to view the content</h3>"
+                return
+            }
+
+            if (!admin) {
                 return
             }
 
@@ -527,9 +534,9 @@
 
             document.getElementById('viewwaitinglist').addEventListener('click', function() {
                 try {
-                    window.location.href = '../cgi_bin/manageChannelMembers.php';
+                    window.location.href = '../cgi_bin/waitlist.php';
                 } catch (error) {
-                    console.error('Error navigating to manageChannelMembers.php:', error);
+                    console.error('Error navigating to waitlist.php:', error);
                 }
             });
 

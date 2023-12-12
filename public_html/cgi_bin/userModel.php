@@ -117,13 +117,13 @@
 
         // Check if there is a row with is_board_admin = 1
         if ($result->num_rows > 0) {
-            echo "true";
+            //echo "true";
             $stmt->close();
             $conn->close();
 
             return true;
         } else {
-            echo "false";
+            //echo "false";
             $stmt->close();
             $conn->close();
 

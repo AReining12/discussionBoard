@@ -1,162 +1,178 @@
-<!DOCTYPE html>
+
+
+<?php
+error_reporting(E_ALL);
+include('session_start.php');
+include('userModel.php');
+include('boardModel.php');
+include('boardController.php');
+?>
+<!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
+
+<!DOCTYPE html>=
 <!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
 <?php
     include_once('session_start.php');
-?>
+?>=
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discussion Board</title>
+    <title>McChat Discussion System</title>
+
     <link href="../cgi_bin/bootstrap/bootstrap.min.css" rel="stylesheet">
     
     <style>
+        
+        /* Sidebar styling */
+        .sidebar {
+            flex: 0 0 200px; 
+            min-height: 100vh; 
+            background-color: #f8f9fa; 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Style for each link in the sidebar */
+        .sidebar-link {
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        /* Hover effect for sidebar links */
+        .sidebar-link:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Sidebar header styling */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            justify-content: center; 
+        }
+        
+        /* Logo within the sidebar */
+        .sidebar-header .logo {
+            /* flex: 1; */
+            height: 35px;
+            width: 150px;
+        }
+        
+        /* Main content area styling */
+        .content-area {
+            padding: 20px; 
+            min-height: 100vh; 
+        }
 
-        body {
-            font-family: Arial, sans-serif;
+        /* Ensure the main container is a flex container */
+        .container-fluid {
+            display: flex;
+            min-height: 100vh; /* Full viewport height */
         }
 
          /* Adjust row to work inside a flex container */
-         .row {
+        .row {
             display: flex;
             flex-grow: 1; /* Allow row to grow and fill space */
         }
-    
-        .container-fluid {
-            display: flex;
-            min-height: 100vh;
-        }
-    
-        .sidebar {
-            flex: 0 0 200px;
-            min-height: 100vh;
-            background-color: #f8f9fa; /* Light grey background */
-            padding: 10px;
-            box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
-        }
-    
-        .sidebar a, .sidebar div {
-            /* display: block; */
-            padding: 8px 10px;
-            margin: 5px 0;
-            color: #333;
-            text-decoration: none;
-        }
-    
-        .sidebar a:hover, .sidebar div:hover {
-            background-color: #e9ecef; /* Light hover effect */
-        }
-
-        .mycourses-link{
-            text-align: center;
-        }
-
-    
-        .search-box {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            align-items: center;
-        }
-
-        .make-post {
-            font-weight: bold;
-            color: #007bff; /* Bootstrap primary color */
-        }
-
-        .manage-system {
-            font-weight: bold;
-            color: #007bff; /* Bootstrap primary color */
-        }
-    
-        .content-area {
-            padding: 20px;
-            background-color: #fff;
-            border-left: 1px solid #ced4da;
-            min-height: 100vh; 
-        }
-    
-        .post-list {
-            list-style-type: none;
-            padding: 0;
-        }
-    
-        .post-list div {
-            cursor: pointer;
-            border-bottom: 1px solid #ddd;
-            padding: 10px;
-        }
-    
-        .post-list div:hover {
-            background-color: #f5f5f5;
-        }
 
         .welcome {
-            position: relative; /* Allows absolute positioning of children */
-            display: block;
+            min-height: 95vh; /* Full viewport height */
+
             background: 
                 linear-gradient(
                 to top,
                 rgba(200, 200, 255, 0),
-                rgba(0, 0, 100, 0.5)
+                rgba(0, 0, 100, 0.4)
                 ),
-                url(../asserts/images/welcome2.jpg);
-            min-height: 95vh;
-            background-size: cover;
-            position: relative; 
-            padding: 20px; 
-            margin-top: 22px; /* Adds 20px space above the welcome section */
+                url('../asserts/images/welcome.jpg');
+            background-size: cover; 
+            position: relative; /* 使绝对定位的子元素（如 .logout）相对于此元素定位 */
         }
 
-        .welcome-text {
+        .welcome-text{
             margin-top: 1rem;
             font-family: Tahoma, Arial, sans-serif;
-            font-weight: bold;
-            text-align: center;
-            color: white;
+            font-weight: bold; 
+            text-align: center; 
+            color: white; 
             position: absolute;
+            display: flex;       /* 启用 flexbox */
+            justify-content: space-between; /* 在项目之间平均分配可用空间 */
+            align-items: center; /* 垂直居中对齐 */
             top: 10%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
 
-        .spacer {
-            height: 100px; 
+        .logout {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 10px; /* 根据需要调整边距 */
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: white; /* 可选：添加背景色以增加可见度 */
+            z-index: 100; /* 确保按钮位于其他元素之上 */
         }
 
-        .manage-board-member, .manage-channels, .manage-channel-members, #join {
+        
+        /* Course card styling */
+        .course-card {
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .search {
             position: absolute;
-            padding: 8px 12px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            border-radius: 4px;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .create {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         
-        .manage-channels {
-            top: 160px;
-            left: 430px;  /*Position at lower-left corner */
+        /* Search container styling */
+        .search-container {
+            text-align: center;
+            padding: 20px;
         }
 
-        .manage-board-member {
-            top: 160px;
-            right: 430px; /* Position at lower-right corner */
+        /* Search header with flexbox for alignment */
+        .search-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .manage-channel-members {
-            bottom: 160px;
-            right: 430px; /* Position at lower-right corner */
+        .search-header h2 {
+            margin-right: 10px;
         }
 
-        .comment-section {
-            margin-top: 20px;
+        /* Search box styling */
+        .search-box {
+            width: 50%;
+            padding: 10px;
+            margin: 10px auto; 
         }
 
-        #commentText {
-            margin-bottom: 10px;
+        /* Search button styling */
+        .search-button {
+            margin-top: 10px;
         }
 
     </style>
@@ -164,344 +180,62 @@
 </head>
 
 <body>
+    <!-- Sidebar with only the 'Create a Course' tab -->
     <div class="container-fluid">
-        <!-- Main row for sidebar and content area -->
         <div class="row">
-
-            <!-- Left Sidebar -->
             <div class="col-md-2 sidebar">
-                <!-- Navigation and utility links in sidebar -->
-                <a href="../pages/SelectBoard.html" class="mycourses-link"><b>My Courses</b></a><br>
-                <br>
-                <a href="<?php
-                    echo "../pages/DiscussionBoard.html?course=" . urlencode($_SESSION['boardID']);
-                ?>" class="mycourses-link"><b>Back</b></a>
-
-                <!-- List where posts will be dynamically added -->
+                <div class="sidebar-header">
+                    <!-- Click mcgill logo to show welcome page and log out-->
+                    <button id="logoButton" style="background:none;border:none;padding:0;">
+                        <div class="logo">
+                            <img src="../asserts/images/logo.png" alt="Logo" class="img-fluid">
+                        </div>
+                    </button>
+                </div>
+                <!-- Only the 'Create a Course' tab is visible -->
+                
             </div>
 
             <!-- Right Content Area -->
-            <div class="col-md-10" id="contentArea">
-                <!-- Area where the content of posts will be displayed -->
-
-                <!-- 'Make a Post' Form -->
-                <div id="makepostSection">
-                    <a href="addMemberToChannel.php">Add Member to Channel<br></a>
-                    <a href="removeMemberFromChannel.php">Remove Member from Channel</a>
+            <div class="col-md-10">
+                <div class="content-area" id="contentArea">
+                    <!-- Content for the 'Create a Course' section -->
+                    <div class="create" id="createCourseSection">
+                        <div class="create-course-container" style="text-align: center;">
+                            <!-- Course Creation Form -->
+                           <!-- Form to add or remove channels -->
+                           <a class="btn btn-primary" href="addMemberToChannel.php">Add Member to Channel</a>
+                           <a href="removeMemberFromChannel.php">Remove Member from Channel</a>
+                        </div>
+                    </div>
                 </div>
-
             </div>
-
         </div>
     </div>
 
-    <!-- Including Bootstrap JavaScript for functionality -->
+    <!-- Scripts for functionality -->
+
     <script src="../cgi_bin/bootstrap/jquery.min.js"></script>
     <script src="../cgi_bin/bootstrap/popper.min.js"></script>
     <script src="../cgi_bin/bootstrap/bootstrap.min.js"></script>
     <script src="../cgi_bin/connection.js"></script>
 
     <script>
-        /*
-        // Dummy data for posts (used for demonstration purposes)
-        let posts = [
-            // { title: "Post 1", content: "Content for Post 1" },
-            // { title: "Post 2", content: "Content for Post 2" },
-            // { title: "Post 3", content: "Content for Post 3" },
-            // { title: "Post 4", content: "Content for Post 1" },
-            // { title: "Post 5", content: "Content for Post 2" },
-            // { title: "Post 6", content: "Content for Post 3" },
-            // Add more post data as needed
-        ];
+        let connection = null;
 
-        let connection = null
-        async function init(){
+        async function init() {
             try {
-                connection = await Connection.connect()
-                let user_boards = await connection.getBoards()
-                let id = parseInt(getUrlParameter('course'))
-                let found = false
-                let exists = false
-                let name = ""
-                user_boards.forEach(row => {
-                    if (row.board_id == id) {
-                        found = true
-                        exists = true
-                        name = row.board_name
-                    }
-                })
-                if (!found) {
-                    let all_boards = await connection.searchBoards("")
-                    all_boards.forEach(row => {
-                        if (row.board_id == id) {
-                            exists = true
-                            name = row.board_name
-                        }
-                    })
-                }
-                handleCourseSpecificLogic(found, exists, name)
-                if (found) {
-                    let result = await connection.setBoard(id)
-                    if (!result.success) {
-                        throw new Error("Server refused to set board")
-                    }
-                    posts = await connection.getBoardMessages()
-                } else {
-                    posts = []
-                }
-                displayPosts()
-                return found
+                connection = await Connection.connect();
             } catch (error) {
                 if (error instanceof TypeError) {
-                    throw error
+                    throw error;
                 }
-                window.location.replace("../landingpage.html")
+                window.location.replace("../landingpage.html");
             }
         }
 
-        function legibleTime(time) {
-            let returnTime = 0;
-            let returnString = ""
-            if (time / 1000 < 1) {
-                returnTime = Math.floor(time)
-                returnString = " millisecond";
-            } else if (time / (60*1000) < 1) {
-                returnTime = Math.floor(time / 1000)
-                returnString = " second"
-            } else if (time / (60*60*1000) < 1) {
-                returnTime = Math.floor(time / (60*1000))
-                returnString = " minute"
-            } else if (time / (24*60*60*1000) < 1) {
-                returnTime = Math.floor(time / (60*60*1000))
-                returnString = " hour"
-            } else if (time / (7*24*60*60*1000) < 1) {
-                returnTime = Math.floor(time / (24*60*60*1000))
-                returnString = " day"
-            } else if (time / (30*24*60*60*1000) < 1) {
-                returnTime = Math.floor(time / (7*24*60*60*1000))
-                returnString = " week"
-            } else if (time / (365*24*60*60*1000) < 1) {
-                returnTime = Math.floor(time / (30*24*60*60*1000))
-                returnString = " month"
-            } else {
-                returnTime = Math.floor(time / (365*24*60*60*1000))
-                returnString = " year"
-            }
-            return returnTime + returnString + (returnTime > 1 ? "s" : "")
-        }
-
-        // Function to extract URL parameters (e.g., 'course' from the query string)
-        function getUrlParameter(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            const results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        }
+        init();
         
-        // Logic specific to handling course-related features
-        function handleCourseSpecificLogic(isValidUser, boardExists, courseName) {
-            // Create a new element for the welcome section
-            const welcomeSection = document.createElement('div');
-            welcomeSection.id = 'welcomeSection';
-            welcomeSection.className = 'welcome';
-
-            // Add a spacer div to adjust the height
-            const spacerDiv = document.createElement('div');
-            spacerDiv.className = 'spacer';
-            welcomeSection.appendChild(spacerDiv);
-
-            // Create an inner text container
-            const welcomeTextDiv = document.createElement('div');
-            welcomeTextDiv.className = 'welcome-text';
-
-            // Add welcome message and course name
-            // <h1>Discussion Board for ${courseName}</h1>
-            welcomeTextDiv.innerHTML = `
-            <h1>Discussion Board for ${courseName}</h1>
-            `;
-
-            // Append the text container to the welcome section
-            welcomeSection.appendChild(welcomeTextDiv);
-
-            // Add the welcome section to the content area
-            const contentArea = document.getElementById('contentArea');
-            contentArea.prepend(welcomeSection);
-
-            if (!boardExists) {
-                welcomeTextDiv.innerHTML = "<h1>Board not found</h1>"
-                return
-            }
-
-            if (!isValidUser) {
-                welcomeTextDiv.innerHTML = "<h3>You must be a member of this board to view the content</h3><div id='join' style='width:100%'>Request to join</div>"
-                document.getElementById("join").addEventListener('click', function () {
-                    alert('Application denied')
-                })
-                return
-            }
-
-            // Create Manage Board Members button
-            const manageBoardMemberButton = document.createElement('div');
-            manageBoardMemberButton.className = 'manage-board-member';
-            manageBoardMemberButton.id = 'manageBoardMember';
-            manageBoardMemberButton.textContent = 'Manage Board Members';
-    
-            // Create Manage Channels button
-            const manageChannelsButton = document.createElement('div');
-            manageChannelsButton.className = 'manage-channels';
-            manageChannelsButton.id = 'manageChannels';
-            manageChannelsButton.textContent = 'Manage Channels';
-
-            // Create Manage Channel Members button
-            const manageChannelMembersButton = document.createElement('div');
-            manageChannelMembersButton.className = 'manage-channel-members';
-            manageChannelMembersButton.id = 'manageChannelMembers';
-            manageChannelMembersButton.textContent = 'Manage Channel Members';
-
-            // Append buttons to the welcome section
-            welcomeSection.appendChild(manageBoardMemberButton);
-            welcomeSection.appendChild(manageChannelsButton);
-            welcomeSection.appendChild(manageChannelMembersButton); 
-
-            //  Event listeners for buttons:
-            document.getElementById('manageBoardMember').addEventListener('click', function() {
-                try {
-                    window.location.href = '../cgi_bin/manageMembers.php';
-                } catch (error) {
-                    console.error('Error navigating to manageMembers.php:', error);
-                }
-            });
-
-            document.getElementById('manageChannels').addEventListener('click', function() {
-                try {
-                    window.location.href = '../cgi_bin/manageChannels.php';
-                } catch (error) {
-                    console.error('Error navigating to manageChannels.php:', error);
-                }
-            });
-
-            document.getElementById('manageChannelMembers').addEventListener('click', function() {
-                try {
-                    window.location.href = '../cgi_bin/manageChannelMembers.php';
-                } catch (error) {
-                    console.error('Error navigating to manageChannelMembers.php:', error);
-                }
-            });
-
-        }
-        
-        // Event listener for 'Manage System' button click
-        document.getElementById('managesystem').addEventListener('click', function() {
-            const welcomeSection = document.getElementById('welcomeSection');
-            welcomeSection.style.display = 'block'; // Show the welcome section
-
-            // Clear the previously displayed post content
-            const postDisplayArea = document.getElementById('postDisplayArea');
-                postDisplayArea.innerHTML = '';
-
-            // Hide 'Make a Post' form section
-            const makepostSection = document.getElementById('makepostSection');
-            if (makepostSection) {
-                makepostSection.style.display = 'none';
-            }
-
-        });
-        
-        // Display make a post page
-        document.addEventListener('DOMContentLoaded', function() {
-            init().then(result => {
-                if (result) {
-                    // Event listener for 'Make a Post'
-                    document.getElementById('makepost').addEventListener('click', function() {
-                        
-                        // Hide welcome section
-                        if (welcomeSection) {
-                            welcomeSection.style.display = 'none';
-                        }
-
-                        // Clear the previously displayed post content
-                        const postDisplayArea = document.getElementById('postDisplayArea');
-                        postDisplayArea.innerHTML = '';
-
-                        // Display the 'Make a Post' form section
-                        const makepostSection = document.getElementById('makepostSection');
-                        makepostSection.style.display = 'block';
-                    });
-                }
-            })
-        });
-    
-        // Function to display posts in the sidebar
-        function displayPosts(filteredPosts = posts) {
-            const postList = document.querySelector('.post-list');
-            postList.innerHTML = ''; // Clear existing posts
-    
-            filteredPosts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.classList.add('sidebar-link');
-                postElement.textContent = post.message_title //post.title;
-                postElement.onclick = () => displayPostContent(post);
-                postList.appendChild(postElement);
-            });
-
-        }
-    
-        // Function to display post content
-        function displayPostContent(post) {
-            const contentArea = document.getElementById('postDisplayArea');
-//            const postContent = `<h3>${post.title}</h3><p>${post.content}</p>`;
-            const postContent = `<h3>${post.message_title} <span class='channel' style='background-color: hsl(` + ((post.channel_id*130)%360) + `,100%,75%)'>${post.channel_name}</span></h3><h4>${post.author} <span class="time">` + legibleTime(new Date() - new Date(post.message_time)) + ` ago</span></h4><p>${post.message_text}</p>`;
-            
-            // Add a textarea for comments
-            const commentSection = `
-                <div class="comment-section">
-                    <textarea class="form-control" id="commentText" rows="2" placeholder="Add a comment..."></textarea>
-                    <button class="btn btn-primary" id="postComment">Post Comment</button>
-                </div>
-            `;
-
-            // Replace existing content in contentArea with the new post content
-            contentArea.innerHTML = postContent + commentSection;
-
-        // Add event listener to the Post Comment button
-        document.getElementById('postComment').addEventListener('click', function() {
-            postComment(post.title); // You might want to pass an identifier for the post
-        });
-
-            // Hide 'Make a Post' form section
-            const makepostSection = document.getElementById('makepostSection');
-            if (makepostSection) {
-                makepostSection.style.display = 'none';
-            }
-            
-            // Hide welcome section
-            if (welcomeSection) {
-                welcomeSection.style.display = 'none';
-            }
-        }
-
-        // Initial display of all posts
-        displayPosts(); 
-
-        // Event listener for search functionality
-        document.querySelector('.search-box').addEventListener('input', function(event) {
-            const searchTerm = event.target.value.toLowerCase();
-            const filteredPosts = posts.filter(post => post.title.toLowerCase().includes(searchTerm));
-            displayPosts(filteredPosts);
-
-        });
-
-        function postComment(postTitle) {
-            const commentText = document.getElementById('commentText').value;
-            // Logic to handle the comment post
-            // For example, send the comment to your server and then update the UI
-            console.log("Comment on post", postTitle, ":", commentText);
-            // Clear the comment textarea after posting
-            document.getElementById('commentText').value = '';
-        }*/
-
     </script>
-    
 </body>
 </html>
-

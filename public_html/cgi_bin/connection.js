@@ -154,14 +154,24 @@ class Connection {
         return data.status
     }
 
+    async isAdmin(boardId) {
+        enforceTypes(boardId, "number")
+        let data = await Connection.ajax("../cgi_bin/boardController.php", {action: "is_admin", board_id: boardId})
+        enforceTypes(data, "object", data.success, "boolean", data.admin, "boolean")
+        if (!data.success) {
+            throw new Error("Action failed with error code " + data.status)
+        }
+        return data.admin
+    }
+
     static async connect() {
         let data = await Connection.ajax("../cgi_bin/loginhandler.php", {action: "authenicate"})
-        enforceTypes(data, "object", data.success, "boolean")
+        enforceTypes(data, "object", data.success, "boolean", data.username, "string")
         if (!data.success) {
             throw new Error("Could not authenicate user, no session variable exists")
         }
         Connection.#internal = true
-        let instance = new Connection(data.username)
+        let instance = new Connection(data.username, data.admin)
         Connection.#internal = false
         return instance
     }
