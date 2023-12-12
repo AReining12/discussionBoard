@@ -68,28 +68,21 @@ class boardModel {
         $sql->execute();
     }
 
-    public function removeMember($boardID, $userID){
+    public function removeMember($username, $boardID){
         include('db_connect.php');
         // SQL statement
-        $stmt = $conn->prepare("SELECT * FROM board_users WHERE user_id = ? AND board_id = ?");
+        $stmt = $conn->prepare("SELECT removeMember(?, ?) as code");
 
         // Bind parameters
-        $stmt->bind_param("ii", $userID, $boardID);
+        $stmt->bind_param("si", $username, $boardID);
 
         // Execute the query
         $stmt->execute();
-
-        // Store the result
-        $result = $stmt->get_result();
-
-        // if true -> remove, if false -> user is already not a member
-        if($result) {
-            $stmt = $conn->prepare("DELETE FROM board_users WHERE user_id = ? AND board_id = ?");
-            $stmt->bind_param("ii", $userID, $boardID);
-            $stmt->execute();
-            $stmt->close();
-            $conn->close();
-            }
+        $code = $stmt->get_result()->fetch_all(MYSQLI_ASSOC)[0]["code"];
+        
+        $stmt->close();
+        $conn->close();
+        return $code;
     }
 
     public function getBoardID($boardname) {
@@ -448,54 +441,54 @@ class boardModel {
 
     }
 
-    public function isOnBoard($userID, $boardID){
-        $sql = "SELECT COUNT(*) AS userCount
-        FROM board_users
-        WHERE user_id = :userId AND board_id = :boardId";
+    // public function isOnBoard($userID, $boardID){
+    //     $sql = "SELECT COUNT(*) AS userCount
+    //     FROM board_users
+    //     WHERE user_id = :userId AND board_id = :boardId";
 
-        $stmt = $pdo->prepare($sql);
+    //     $stmt = $pdo->prepare($sql);
 
-        // Bind parameters
-        $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
-        $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
+    //     // Bind parameters
+    //     $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
+    //     $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
 
-        // Execute the query
-        $stmt->execute();
+    //     // Execute the query
+    //     $stmt->execute();
 
-        // Fetch the result
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    //     // Fetch the result
+    //     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Check if the user is a member of the board
-        $userCount = $result['userCount'];
-        if ($userCount > 0) {
-            return true;
-        } else {
-            $sql = "SELECT COUNT(*) AS userCount
-            FROM board_applicants
-            WHERE user_id = :userId AND board_id = :boardId";
+    //     // Check if the user is a member of the board
+    //     $userCount = $result['userCount'];
+    //     if ($userCount > 0) {
+    //         return true;
+    //     } else {
+    //         $sql = "SELECT COUNT(*) AS userCount
+    //         FROM board_applicants
+    //         WHERE user_id = :userId AND board_id = :boardId";
 
-            $stmt = $conn->prepare($sql);
+    //         $stmt = $conn->prepare($sql);
 
-            // Bind parameters
-            $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
-            $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
+    //         // Bind parameters
+    //         $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
+    //         $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
 
-            // Execute the query
-            $stmt->execute();
+    //         // Execute the query
+    //         $stmt->execute();
 
-            // Fetch the result
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    //         // Fetch the result
+    //         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Check if the user is a member of the board
-            $userCount = $result['userCount'];
-            if ($userCount > 0) {
-                return true;
-            } else {
-                return false;
-            }
+    //         // Check if the user is a member of the board
+    //         $userCount = $result['userCount'];
+    //         if ($userCount > 0) {
+    //             return true;
+    //         } else {
+    //             return false;
+    //         }
                 
-        }
-    }
+    //     }
+    // }
 
     public function addToWaitingList($username, $boardID){
         include('db_connect.php');

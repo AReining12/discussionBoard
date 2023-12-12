@@ -328,7 +328,7 @@ BEGIN
         DELETE channel_users FROM channel_users INNER JOIN channels
         ON channels.channel_id=channel_users.channel_id
         WHERE channels.board_id=board_id AND channel_users.user_id=user_id;
-        DELETE FROM board_users WHERE board_users.user_id=user_id;
+        DELETE FROM board_users WHERE board_users.user_id=user_id AND board_users.board_id=board_id;
         RETURN 0;
     ELSE
         RETURN 11;
