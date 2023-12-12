@@ -426,23 +426,24 @@ class boardModel {
         // verify that channel exists
         include('db_connect.php');
 
-        $stmt = $conn->prepare("SELECT approve(?, ?)");
-        //echo "$username";
-        //echo "$boardID";
+        $stmt = $conn->prepare("SELECT approve(?, ?) as code");
+        echo "$username";
+        echo "$boardID";
 
         // Bind parameters
         $stmt->bind_param("si", $username, $boardID);
         // echo "$result";
 
-        if (!$stmt->execute()) {
-            // Log or handle the error
-            echo "Error: " . $stmt->error;
-        } else {
-            echo "True";
-        }
+        // Execute the query
+        $stmt->execute();
 
+        // Store the result
+        $result = $stmt->get_result();
+        $code = $result->fetch_all(MYSQLI_ASSOC)[0]["code"];
         $stmt->close();
         $conn->close();
+        echo $code;
+        return $code;
 
     }
   
