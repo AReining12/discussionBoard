@@ -35,15 +35,20 @@
                     $boardModel = new boardModel();
                     $boardID = $boardModel->getBoardID($boardname);
 
-                    // if user is admin, show them list of channels user is in
+                    // get user channels
+                    $userChannels = $boardModel->getUserChannels($userRemove, $boardID);
                     
-                    $userChannels = $boardModel->getUserChannels($boardID, $removeUserID);
-                    foreach ($userChannels as $userChannel) {
-                        $channelID = $userChannel['channel_id'];
-                        $channelName = $boardModel->getChannelNameFromID($channelID);
-                        echo "<option value=\"$channelName\">{$channelName}</option>";
-                        
-                    } 
+                    if (!empty($userChannels)) {
+                        foreach ($userChannels as $userChannel) {
+                            $channelID = $userChannel['channel_id'];
+                            $channelName = $boardModel->getChannelNameFromID($channelID);
+                            echo "<option value=\"$channelName\">{$channelName}</option>";
+                        }
+                    } else {
+                        // Handle the case when $userChannels is empty (e.g., display a message)
+                        echo "<option value=''>No Channels Found</option>";
+                    }
+                    
                     ?>
                 </select>
                 <br />

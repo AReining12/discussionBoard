@@ -397,5 +397,139 @@ class boardModel {
         $conn->close();
         return $rows;
     }
+
+    public function getCoursesNotJoined($username){
+        $userBoards = $this->getUserBoards($username);
+
+        include('db_connect.php');
+
+        // SQL statement
+        // this shows all boards, need to update to only include boards user is not in
+        $stmt = $conn->prepare("SELECT board_id, board_name FROM boards");
+
+        // Bind parameters
+        //$stmt->bind_param("s", $username);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $conn->close();
+
+        foreach ($rows as $index => $row) {
+            foreach ($userBoards as &$userBoard) {
+                if (count(array_diff_assoc($row, $userBoard)) == 0) {
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $rows;
+    }
+
+    public function approveMember($username, $boardID){
+        // verify that channel exists
+        include('db_connect.php');
+
+        $stmt = $conn->prepare("SELECT approve(?, ?)");
+
+        // Bind parameters
+        $stmt->bind_param("si", $username, $boardID);
+
+        if (!$stmt->execute()) {
+            // Log or handle the error
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
+        $conn->close();
+
+    }
+
+    public function isOnBoard($userID, $boardID){
+        $sql = "SELECT COUNT(*) AS userCount
+        FROM board_users
+        WHERE user_id = :userId AND board_id = :boardId";
+
+        $stmt = $pdo->prepare($sql);
+
+        // Bind parameters
+        $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
+        $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Fetch the result
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Check if the user is a member of the board
+        $userCount = $result['userCount'];
+        if ($userCount > 0) {
+            return true;
+        } else {
+            $sql = "SELECT COUNT(*) AS userCount
+            FROM board_applicants
+            WHERE user_id = :userId AND board_id = :boardId";
+
+            $stmt = $conn->prepare($sql);
+
+            // Bind parameters
+            $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
+
+            // Execute the query
+            $stmt->execute();
+
+            // Fetch the result
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Check if the user is a member of the board
+            $userCount = $result['userCount'];
+            if ($userCount > 0) {
+                return true;
+            } else {
+                return false;
+            }
+                
+        }
+    }
+
+    public function addToWaitingList($username, $boardID){
+        include('db_connect.php');
+
+        // SQL statement
+        // this shows all boards, need to update to only include boards user is not in
+        $stmt = $conn->prepare("SELECT joinBoard(?, ?) as code");
+
+        // Bind parameters
+        $stmt->bind_param("si", $username, $boardID);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+        $code = $result->fetch_all(MYSQLI_ASSOC)[0]["code"];
+        $stmt->close();
+        $conn->close();
+
+        
+        return $code;
+
+        // // if user not in board and not on list
+        // $isOnBoard = $this->isOnBoard($userID, $boardID);
+        // if (!$isOnBoard){
+        //     $sql = $conn->prepare("INSERT INTO `board_applicants` (`user_id`, `board_id`) VALUES ('{$userID}', '{$boardID}')");
+        //     $sql->execute();
+        //     return 0;
+        // } else {
+        //     return 1;
+        // }
+    
+        
+    }
 }
 ?>

@@ -193,7 +193,7 @@
                 <input type="hidden" name="stuff_type" value="3">
     
                 <!-- Buttons for submitting the registration form or returning to the login page -->
-                <input type="submit" name="register" value="Register">
+                <button type="submit" name="register">Register</button>
                 <a href="../landingpage.html"><button type="button">Back to Login</button></a>
             <div class="jump-to-stuff">
                 <a href="#" onclick="showStuff()">Not a student? Click here!</a>
@@ -205,7 +205,7 @@
 
     <!-- This section is for staff registration -->
     <div class="container" id="stuff" style="display:none;">
-        <h2>Register as stuff !</h2>
+        <h2>Register as staff !</h2>
 
         <form name="input" action="../cgi_bin/registrationhandler.php" method="post" autocomplete="on">
         
@@ -250,7 +250,7 @@
             <input type="text" id="secure-answer" name="secure-answer"><br> -->
 
         <!-- Buttons for submitting the staff registration form or returning to the login page -->
-        <input type="submit" name="register" value="Register">
+        <button type="submit" name="register">Register</button>
         <a href="../landingpage.html"><button type="button">Back to Login</button></a>
 
     </div>
