@@ -18,7 +18,6 @@
             <input type="submit" name="add_message" value="Post message">
         <?php
         // Anna Reining, 260885420
-        // User login form
         ?>
 
     </body>
