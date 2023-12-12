@@ -473,7 +473,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($_SESSION['user_id']) && isset($request->boardID)) {
                     $boardModel = new boardModel();
                     // $boardID = $boardModel->getBoardID($request->boardName);
-                    $status = $boardModel->addToWaitingList($_SESSION['user_id'], $request->boardID);
+                    $status = $boardModel->addToWaitingList($_SESSION['username'], $request->boardID);
                     echo json_encode(['success' => true, 'status' => $status]);           
                 } else {
                     echo json_encode(['success' => false, 'status' => 1]);

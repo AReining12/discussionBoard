@@ -446,8 +446,6 @@ class boardModel {
         $stmt->close();
         $conn->close();
 
-
-        
     }
 
     public function isOnBoard($userID, $boardID){
@@ -499,17 +497,37 @@ class boardModel {
         }
     }
 
-    public function addToWaitingList($userID, $boardID){
+    public function addToWaitingList($username, $boardID){
         include('db_connect.php');
-        // if user not in board and not on list
-        $isOnBoard = $this->isOnBoard($userID, $boardID);
-        if (!$isOnBoard){
-            $sql = $conn->prepare("INSERT INTO `board_applicants` (`user_id`, `board_id`) VALUES ('{$userID}', '{$boardID}')");
-            $sql->execute();
-            return 0;
-        } else {
-            return 1;
-        }
+
+        // SQL statement
+        // this shows all boards, need to update to only include boards user is not in
+        $stmt = $conn->prepare("SELECT joinBoard(?, ?) as code");
+
+        // Bind parameters
+        $stmt->bind_param("si", $username, $boardID);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+        $code = $result->fetch_all(MYSQLI_ASSOC)[0]["code"];
+        $stmt->close();
+        $conn->close();
+
+        
+        return $code;
+
+        // // if user not in board and not on list
+        // $isOnBoard = $this->isOnBoard($userID, $boardID);
+        // if (!$isOnBoard){
+        //     $sql = $conn->prepare("INSERT INTO `board_applicants` (`user_id`, `board_id`) VALUES ('{$userID}', '{$boardID}')");
+        //     $sql->execute();
+        //     return 0;
+        // } else {
+        //     return 1;
+        // }
     
         
     }

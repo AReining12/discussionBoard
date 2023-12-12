@@ -130,9 +130,6 @@ class Connection {
         enforceTypes(data, "object", data.success, "boolean", data.status, "number")
         if (!data.success) {
             let errorText = "Action failed with error code " + data.status
-            if (data.status == 7) {
-                errorText = "Unauthorized access to channel id " + courseId
-            }
             throw new Error(errorText)
         }
         return data.status

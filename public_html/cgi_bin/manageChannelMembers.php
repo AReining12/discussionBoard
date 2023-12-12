@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
-
-<!DOCTYPE html>
+<?php
+    include_once('session_start.php');
+?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -171,16 +172,17 @@
             <div class="col-md-2 sidebar">
                 <!-- Navigation and utility links in sidebar -->
                 <a href="../pages/SelectBoard.html" class="mycourses-link"><b>My Courses</b></a><br>
-                <!--<a href="<?php echo "../pages/DiscussionBoard.html?course=" . urlencode($_SESSION['boardID']); ?>" class="mycourses-link"><b>Back</b></a>-->
+                <br>
+                <a href="<?php
+                    echo "../pages/DiscussionBoard.html?course=" . urlencode($_SESSION['boardID']);
+                ?>" class="mycourses-link"><b>Back</b></a>
 
                 <!-- List where posts will be dynamically added -->
-                <div class="post-list"></div>
             </div>
 
             <!-- Right Content Area -->
             <div class="col-md-10" id="contentArea">
                 <!-- Area where the content of posts will be displayed -->
-                <div id="postDisplayArea"></div>
 
                 <!-- 'Make a Post' Form -->
                 <div id="makepostSection">

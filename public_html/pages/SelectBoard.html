@@ -526,11 +526,19 @@
         function requestToJoinCourse(courseId) {
             // if user is not already a part of this course, adds them to waiting list
             connection.addToWaitingList(courseId).then(status => {
-                if (status != 0){
-                    console.error("Error #" + status + ": could not add to waiting list")
+                switch (status) {
+                    case 8:
+                        console.error("You're already on the board")
+                        break;
+                    case 9:
+                        console.error("You've already applied to the board")
+                        break;
+                
+                    default:
+                        alert(`Request to join course #${courseId} sent successfully!`);
+                        break;
                 }
             })
-            alert(`Request to join course #${courseId} sent successfully!`);
         }
 
         // When the page loads
