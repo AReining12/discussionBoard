@@ -94,7 +94,7 @@ class boardController {
         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($curBoardID);
 
         // Redirect
-        // header("Location: " . $redirectUrl);
+        header("Location: " . $redirectUrl);
         exit;
     }
 
@@ -109,7 +109,7 @@ class boardController {
         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($curBoardID);
 
         // Redirect
-        // header("Location: " . $redirectUrl);
+        header("Location: " . $redirectUrl);
         exit;
     }
 
