@@ -1,5 +1,3 @@
-
-
 <?php
 error_reporting(E_ALL);
 include('session_start.php');
@@ -243,6 +241,3 @@ include('boardController.php');
     </script>
 </body>
 </html>
-
-
-

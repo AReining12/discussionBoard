@@ -9,7 +9,11 @@ include('boardController.php');
 ?>
 <!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
 
-<!DOCTYPE html>
+<!DOCTYPE html>=
+<!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
+<?php
+    include_once('session_start.php');
+?>=
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -78,6 +82,7 @@ include('boardController.php');
 
         .welcome {
             min-height: 95vh; /* Full viewport height */
+
             background: 
                 linear-gradient(
                 to top,
@@ -209,6 +214,7 @@ include('boardController.php');
     </div>
 
     <!-- Scripts for functionality -->
+
     <script src="../cgi_bin/bootstrap/jquery.min.js"></script>
     <script src="../cgi_bin/bootstrap/popper.min.js"></script>
     <script src="../cgi_bin/bootstrap/bootstrap.min.js"></script>
@@ -233,8 +239,4 @@ include('boardController.php');
     </script>
 </body>
 </html>
-
-
-
-
 

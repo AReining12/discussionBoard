@@ -9,6 +9,10 @@ include('boardController.php');
 <!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
 
 <!DOCTYPE html>
+<!-- Name: Junji Duan   e-mail: junji.duan@mail.mcgill.ca -->
+<?php
+    include_once('session_start.php');
+?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -102,7 +106,7 @@ include('boardController.php');
             left: 50%;
             transform: translate(-50%, -50%);
         }
-
+      
         .logout {
             position: absolute;
             top: 0;
@@ -232,6 +236,3 @@ include('boardController.php');
     </script>
 </body>
 </html>
-
-
-

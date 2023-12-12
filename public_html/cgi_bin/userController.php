@@ -40,9 +40,9 @@
 
         public function loginUser($username, $password){
             $userModel = new UserModel();
-            echo "$username";
-            echo "$password";
-                $result = $userModel->verifyUser($username, $password);
+            // echo "$username<br>";
+            // echo "$password<br>";
+            $result = $userModel->verifyUser($username, $password);
             // will return error if user does not exist in system
             if ($result) { 
                 // user exists in system

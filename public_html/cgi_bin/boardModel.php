@@ -452,7 +452,7 @@ class boardModel {
         $conn->close();
 
     }
-
+  
     public function rejectMember($username, $boardID){
         // verify that channel exists
         include('db_connect.php');
@@ -474,55 +474,6 @@ class boardModel {
     }
 
 
-    // public function isOnBoard($userID, $boardID){
-    //     $sql = "SELECT COUNT(*) AS userCount
-    //     FROM board_users
-    //     WHERE user_id = :userId AND board_id = :boardId";
-
-    //     $stmt = $pdo->prepare($sql);
-
-    //     // Bind parameters
-    //     $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
-    //     $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
-
-    //     // Execute the query
-    //     $stmt->execute();
-
-    //     // Fetch the result
-    //     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    //     // Check if the user is a member of the board
-    //     $userCount = $result['userCount'];
-    //     if ($userCount > 0) {
-    //         return true;
-    //     } else {
-    //         $sql = "SELECT COUNT(*) AS userCount
-    //         FROM board_applicants
-    //         WHERE user_id = :userId AND board_id = :boardId";
-
-    //         $stmt = $conn->prepare($sql);
-
-    //         // Bind parameters
-    //         $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
-    //         $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
-
-    //         // Execute the query
-    //         $stmt->execute();
-
-    //         // Fetch the result
-    //         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    //         // Check if the user is a member of the board
-    //         $userCount = $result['userCount'];
-    //         if ($userCount > 0) {
-    //             return true;
-    //         } else {
-    //             return false;
-    //         }
-                
-    //     }
-    // }
-
     public function addToWaitingList($username, $boardID){
         include('db_connect.php');
 
@@ -543,18 +494,7 @@ class boardModel {
         $conn->close();
 
         
-        return $code;
-
-        // // if user not in board and not on list
-        // $isOnBoard = $this->isOnBoard($userID, $boardID);
-        // if (!$isOnBoard){
-        //     $sql = $conn->prepare("INSERT INTO `board_applicants` (`user_id`, `board_id`) VALUES ('{$userID}', '{$boardID}')");
-        //     $sql->execute();
-        //     return 0;
-        // } else {
-        //     return 1;
-        // }
-    
+        return $code;    
         
     }
 }

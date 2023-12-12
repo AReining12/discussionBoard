@@ -408,6 +408,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $boardController->deleteChannel($boardID, $channelName);
                 break;
 
+            case 'approve_members':
+                // get board id, username
+                $boardName = $_SESSION['boardname'];
+
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+                // get user name
+                $username = $_POST['name'];
+
+                $boardModel->approveMember($username, $boardID);
+                break;
+
 
             case 'accept_request':
                 // get board id, username
