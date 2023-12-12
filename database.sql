@@ -1,4 +1,4 @@
-USE comp307; -- 2023fall-comp307-mlavre1;
+USE 2023fall-comp307-mlavre1;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 
@@ -389,10 +389,18 @@ INSERT INTO errors (error_code, error_description) VALUES
 (11, "Cannot remove non board member"),
 (12, "Only admins can delete discussion boards");
 
+-- Groups should be kept intact as well
+
+INSERT INTO groups (group_name, is_staff) VALUES
+('Professor', 1),
+('TA', 1),
+('Student', 0),
+('Other', 1);
+
 --
 -- Dumping testing data
 --
-
+/*
 INSERT INTO boards (board_name) VALUES
 ('COMP 307'),
 ('SSMU');
@@ -403,11 +411,6 @@ INSERT INTO channels (channel_name, board_id) VALUES
 ('planning', 2),
 ('general', 2);
 
-INSERT INTO groups (group_name, is_staff) VALUES
-('Professor', 1),
-('TA', 1),
-('Student', 0),
-('Other', 1);
 
 INSERT INTO users (user, pass, first_name, last_name, email, group_id) VALUES
 ('johndoe', '$2a$12$kudlGBCLA7Z0HbJvqOnGhekobTnbuXi2A2G.jH4jyQmsJYorcuuy2', 'John', 'Doe', 'johndoe@gmail.com', 1),         -- 12345
@@ -438,3 +441,4 @@ INSERT INTO channel_users (user_id, channel_id) VALUES
 (4, 3),
 (3, 4),
 (2, 4);
+*/
