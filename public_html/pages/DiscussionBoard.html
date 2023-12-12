@@ -80,7 +80,7 @@
         .post-list {
             list-style-type: none;
             overflow-y: auto;
-            height: 45vh;
+            height: 35vh;
             padding: 0;
         }
     
@@ -221,6 +221,14 @@
             font-size: 1.5vw;
         }
 
+        .view-waiting-list {
+            font-weight: bold;
+        }
+
+        .view-waiting-list:hover {
+            cursor: pointer;
+        }
+
     </style>
 
 </head>
@@ -236,6 +244,8 @@
                 <a href="SelectBoard.html" class="mycourses-link"><b>My Courses</b></a>
                 <div class="make-post" id="makepost">Make a Post</div>
                 <div class="manage-system" id="managesystem">Manage System</div>
+                <div class="view-waiting-list" id="viewwaitinglist">View Waiting List</div>
+
                 <div class="dropdown" id="filterChannel">
                     <button class="btn btn-secondary dropdown-toggle channel-select" type="button" data-toggle="dropdown" aria-expanded="false">
                         All channels
@@ -456,7 +466,7 @@
                 return
             }
 
-            // Create Manage Board Members button
+            /* Create Manage Board Members button
             const manageBoardMemberButton = document.createElement('div');
             manageBoardMemberButton.className = 'manage-board-member';
             manageBoardMemberButton.id = 'manageBoardMember';
@@ -472,12 +482,25 @@
             const manageChannelMembersButton = document.createElement('div');
             manageChannelMembersButton.className = 'manage-channel-members';
             manageChannelMembersButton.id = 'manageChannelMembers';
-            manageChannelMembersButton.textContent = 'Manage Channel Members';
+            manageChannelMembersButton.textContent = 'Manage Channel Members';*/
+            <div class="manage-buttons">
+                <div class="manage-board-member" id="manageBoardMember">Manage Board Members</div>
+                <div class="manage-channels" id="manageChannels">Manage Channels</div>
+                <div class="manage-channel-members" id="manageChannelMembers">Manage Channel Members</div>
+            </div>
+
+            /* Create Manage Channel Members button
+            const viewWaitingListButton = document.createElement('div');
+            viewWaitingListButton.className = 'view-waiting-list';
+            viewWaitingListButton.id = 'viewWaitingList';
+            viewWaitingListButton.textContent = 'View Waiting List';*/
 
             // Append buttons to the welcome section
+            /*
             welcomeSection.appendChild(manageBoardMemberButton);
             welcomeSection.appendChild(manageChannelsButton);
-            welcomeSection.appendChild(manageChannelMembersButton); 
+            welcomeSection.appendChild(manageChannelMembersButton); */
+            // welcomeSection.appendChild(viewWaitingListButton);
 
             //  Event listeners for buttons:
             document.getElementById('manageBoardMember').addEventListener('click', function() {
@@ -504,10 +527,34 @@
                 }
             });
 
+            document.getElementById('viewwaitinglist').addEventListener('click', function() {
+                try {
+                    window.location.href = '../cgi_bin/waitlist.php';
+                } catch (error) {
+                    console.error('Error navigating to manageChannelMembers.php:', error);
+                }
+            });
+
         }
         
         // Event listener for 'Manage System' button click
         document.getElementById('managesystem').addEventListener('click', function() {
+            const welcomeSection = document.getElementById('welcomeSection');
+            welcomeSection.style.display = 'block'; // Show the welcome section
+
+            // Clear the previously displayed post content
+            const postDisplayArea = document.getElementById('postDisplayArea');
+                postDisplayArea.innerHTML = '';
+
+            // Hide 'Make a Post' form section
+            const makepostSection = document.getElementById('makepostSection');
+            if (makepostSection) {
+                makepostSection.style.display = 'none';
+            }
+
+        });
+
+        document.getElementById('viewwaitinglist').addEventListener('click', function() {
             const welcomeSection = document.getElementById('welcomeSection');
             welcomeSection.style.display = 'block'; // Show the welcome section
 

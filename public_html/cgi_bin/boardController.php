@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 // Anna Reining, 260885420
 // Handles discussion boards, members, channels, and messages
@@ -80,6 +81,36 @@ class boardController {
 
         // Redirect
         header("Location: " . $redirectUrl);
+        exit;
+    }
+
+    public function approveMember($username, $boardID){
+        $curBoardName = $_SESSION['boardname'];
+
+        $boardModel = new boardModel();
+        $curBoardID = $boardModel->getBoardID($curBoardName);
+
+        $boardModel->approveMember($username, $boardID);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($curBoardID);
+
+        // Redirect
+        // header("Location: " . $redirectUrl);
+        exit;
+    }
+
+    public function rejectMember($username, $boardID){
+        $curBoardName = $_SESSION['boardname'];
+
+        $boardModel = new boardModel();
+        $curBoardID = $boardModel->getBoardID($curBoardName);
+
+        $boardModel->rejectMember($username, $boardID);
+
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($curBoardID);
+
+        // Redirect
+        // header("Location: " . $redirectUrl);
         exit;
     }
 
@@ -379,6 +410,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
 
 
+            case 'accept_request':
+                // get board id, username
+                $boardName = $_SESSION['boardname'];
+
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+                // get user name
+                $username = $_POST['name'];
+
+                $boardController = new boardController();
+                $boardController->approveMember($username, $boardID);
+                break;
+
+            case 'reject_request':
+                // get board id, username
+                $boardName = $_SESSION['boardname'];
+
+                $boardModel = new boardModel();
+                $boardID = $boardModel->getBoardID($boardName);
+
+                // get user name
+                $username = $_POST['name'];
+
+                $boardController = new boardController();
+                $boardController->rejectMember($username, $boardID);
+                break;
+
                 
         }
     } else if ($ajax) {
@@ -445,6 +504,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'status' => 2, 'message' => 'Illegal arguments']);
                 }
                 break;
+
             case 'get_channels':
                 if (isset($_SESSION['boardID'])) {
                     $boardModel = new boardModel();
@@ -454,6 +514,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'status' => 1]);
                 }
                 break;
+
+            case 'add_to_waiting_list':
+                if (isset($_SESSION['user_id']) && isset($request->boardID)) {
+                    $boardModel = new boardModel();
+                    // $boardID = $boardModel->getBoardID($request->boardName);
+                    $status = $boardModel->addToWaitingList($_SESSION['username'], $request->boardID);
+                    echo json_encode(['success' => true, 'status' => $status]);           
+                } else {
+                    echo json_encode(['success' => false, 'status' => 1]);
+                }
+                break;
+
+            case 'get_courses_not_joined':
+                if (isset($_SESSION['username'])) {
+                    $username = $_SESSION['username'];
+                    $boardModel = new boardModel();
+                    $courses = $boardModel->getCoursesNotJoined($username);
+                    echo json_encode(['success' => true, 'status' => 0, 'data' => $courses]);
+                } else {
+                    echo json_encode(['success' => false, 'status' => 1]);
+                }
+                break;
+
             
             default:
                 echo json_encode(['success'=>false]);

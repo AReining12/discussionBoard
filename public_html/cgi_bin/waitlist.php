@@ -197,49 +197,59 @@ include('boardController.php');
                     <!-- Content for the 'Create a Course' section -->
                     <div class="create" id="createCourseSection">
                         <div class="create-course-container" style="text-align: center;">
-                            <!-- Course Creation Form -->
-                           <!-- Form to add or remove channels -->
-                            <form name="removeMemberFromChannelForm" action="boardController.php" method="post" autocomplete="on">
-                                <!--Hidden field to determine whether form is register or login-->
-                                <input type="hidden" name="action" value="add_member_to_channel">
-                                <!-- Aligned text boxes-->
-                                <fieldset>
-                                    <b id="name">Username</b> <input type="text" name="name"> <br />
-                                    <b id="channel_name">Which channel would you like to add this user to?</b>
-                                    <!-- Dropdown box for channel names -->
-                                    <select name="channel_name">
-                                        <option value="">Select a Channel</option>
-                                        <?php
+                        <!-- Form to add or remove channels, Anna Reining, 260885420 -->
+                        <form name="approveMembersForm" action="boardController.php" method="post" autocomplete="on">
+                            <!--Hidden field to determine whether form is register or login-->
+                            <input type="hidden" name="action" id="action" value="">
+                            <!-- Aligned text boxes-->
+                            <fieldset>
+                                <b id="name">User on the waitlist:</b>
+                                <!-- Dropdown box for channel names -->
+                                <select name="name">
+                                    <option value="">Select a User</option>
+                                    <?php
 
-                                        // get variables
-                                        $userID = $_SESSION['user_id'];
-                                        $boardname = $_SESSION['boardname'];
+                                    // get variables
+                                    $userID = $_SESSION['user_id'];
+                                    $boardname = $_SESSION['boardname'];
 
-                                        //get boardID
-                                        $boardModel = new boardModel();
-                                        $boardID = $boardModel->getBoardID($boardname);
+                                    //get boardID
+                                    $boardModel = new boardModel();
+                                    $boardID = $boardModel->getBoardID($boardname);
 
-                                        // verify user is admin
-                                        $userModel = new userModel();
-                                        $isAdmin = $userModel->verifyAdmin($boardID);
-                                        var_dump($isAdmin);
+                                    // verify user is admin
+                                    $userModel = new userModel();
+                                    $isAdmin = $userModel->verifyAdmin($boardID);
+                                    // var_dump($isAdmin);
 
-                                        // if user is admin, show them list of channels
-                                        if ($isAdmin){
-                                            $boardController = new boardController();
-                                            $channels = $boardController->getChannels($boardID);
-                                            foreach ($channels as $channel) {
-                                                echo "<option value=\"{$channel['channel_name']}\">{$channel['channel_name']}</option>";
-                                            }
-                                        } 
-                                        ?>
-                                    </select>
-                                    <br />
-                                </fieldset>
+                                    // if user is admin, show them list of usernames
+                                    if ($isAdmin){
+                                        $boardUsers = $userModel->getWaitingMembers($boardID);
+                                        foreach ($boardUsers as $boardUser) {
+                                            $userID = $boardUser['user_id'];
+                                            $username = $userModel->getUsername($userID);
+                                            echo "<option value=\"$username\">{$username}</option>";
+                                        }
+                                    } 
+                                    ?>
+                                </select>
+                                <br />
+                            </fieldset>
 
-                                <!-- Submit section -->
-                                <input class="btn btn-primary" type="submit" name="add_member_to_channel" value="Add">
-                            </form>
+                            <!-- Submit section -->
+                            <!-- Accept button -->
+                            <input class="btn btn-primary" type="submit" name="accept_request" value="Accept" onclick="setAction('accept_request')">
+
+                            <!-- Reject button -->
+                            <input class="btn btn-primary" type="submit" name="reject_request" value="Reject" onclick="setAction('reject_request')">
+                        </form>
+
+                        <script>
+                            // Set the action value
+                            function setAction(action) {
+                                document.getElementById('action').value = action;
+                            }
+                        </script>
                         </div>
                     </div>
                 </div>
@@ -272,5 +282,7 @@ include('boardController.php');
     </script>
 </body>
 </html>
+
+
 
 

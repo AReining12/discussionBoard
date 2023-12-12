@@ -188,6 +188,7 @@
                 <div class="sidebar-link" id="searchCourses">Search for Courses</div>
                 <div class="sidebar-link" id="createCourse">Create a Course</div>
                 <div class="sidebar-link" id="deleteCourse">Delete a Course</div>
+                <div class="sidebar-link" id="requestToJoin">Request to Join Course</div>
 
             </div>
 
@@ -243,7 +244,13 @@
                         <div class="delete-course-container" style="text-align: center;">
                             <!-- Content (table) for deleting courses will be dynamically generated -->
                         </div>
-                    </div>                
+                    </div>
+                    
+                    <div class="request-to-join" id="requestToJoinSection" style="display: none;">
+                        <h2>Request to Join a Course</h2>
+                        <p>Click on a course to request to join:</p>
+                        <div id="requestToJoinCourses"></div>
+                    </div>
 
                 </div>
             </div>
@@ -391,6 +398,7 @@
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
         });
         
         
@@ -401,6 +409,7 @@
             document.getElementById('myCoursesContent').style.display = 'none'; 
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
         });
         
         // Event listener for 'Create a Course' link
@@ -410,6 +419,7 @@
             document.getElementById('myCoursesContent').style.display = 'none'; 
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
         });
 
         document.getElementById('logoButton').addEventListener('click', function() {
@@ -418,6 +428,7 @@
             document.getElementById('searchCoursesSection').style.display = 'none';
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('deleteCourseSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
         });
 
         document.getElementById('deleteCourse').addEventListener('click', function() {
@@ -426,9 +437,23 @@
             document.getElementById('searchCoursesSection').style.display = 'none';
             document.getElementById('createCourseSection').style.display = 'none';
             document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('requestToJoinSection').style.display = 'none';
 
             // Call a function to load and display courses in a table here
             loadAndDisplayCourses();
+        });
+
+        // Event listener for 'Request to Join Course' link
+        document.getElementById('requestToJoin').addEventListener('click', function() {
+            document.getElementById('requestToJoinSection').style.display = 'block';
+            document.getElementById('myCoursesContent').style.display = 'none';
+            document.getElementById('searchCoursesSection').style.display = 'none';
+            document.getElementById('createCourseSection').style.display = 'none';
+            document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('deleteCourseSection').style.display = 'none';
+
+            // Call a function to load and display courses for the user to join
+            loadAndDisplayCoursesToJoin();
         });
 
         function addBoardListener() {
@@ -458,8 +483,8 @@
                 courses.forEach(course => {
                     tableHtml += `
                         <tr>
-                            <td>${course.board_name} #${course.board_id}</td>
-                            <td><button onclick="confirmDelete(${course.board_id})">Delete</button></td>
+                            <td style="padding-right: 1em"><h5>${course.board_name} #${course.board_id}</h5></td>
+                            <td><button class="btn btn-primary" onclick="confirmDelete(${course.board_id})">Delete</button></td>
                         </tr>`;
                 });
                 tableHtml += '</table>';
@@ -483,6 +508,38 @@
             })
             loadAndDisplayCourses();
         } 
+
+        function loadAndDisplayCoursesToJoin() {
+            // Use the connection object to get a list of courses the user is not a part of
+            connection.getCoursesNotJoined().then(courses => {
+                let buttonsHtml = '';
+                courses.forEach(course => {
+                    buttonsHtml += `
+                        <button class="btn btn-primary" onclick="requestToJoinCourse(${course.board_id})">
+                            ${course.board_name} - Section: ${course.board_id}
+                        </button><br>`;
+                });
+                document.getElementById('requestToJoinCourses').innerHTML = buttonsHtml;
+            });
+        }
+
+        function requestToJoinCourse(courseId) {
+            // if user is not already a part of this course, adds them to waiting list
+            connection.addToWaitingList(courseId).then(status => {
+                switch (status) {
+                    case 8:
+                        console.error("You're already on the board")
+                        break;
+                    case 9:
+                        console.error("You've already applied to the board")
+                        break;
+                
+                    default:
+                        alert(`Request to join course #${courseId} sent successfully!`);
+                        break;
+                }
+            })
+        }
 
         // When the page loads
         document.addEventListener('DOMContentLoaded', function() {

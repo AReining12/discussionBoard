@@ -231,6 +231,25 @@
         return $user;
 
     }
+
+    public function getWaitingMembers($boardID){
+        include('db_connect.php');
+        // SQL statement
+        $stmt = $conn->prepare("SELECT * FROM board_applicants WHERE board_id = ?");
+
+        // Bind parameters
+        $stmt->bind_param("i", $boardID);
+
+        // Execute the query
+        $stmt->execute();
+
+        // Store the result
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        $conn->close();
+        return $rows;
+    }
         
 }
 
