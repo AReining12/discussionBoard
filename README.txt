@@ -17,10 +17,13 @@ Mingchen Ju:
     eg:join courses,managing board applicants,create and delete board(course), logout
 Mikhail Lavrenov:
 - Database
-    - Design
-    - Views
-    - Functions
+    - Designed the entire database
+    - Added views for backend to retrieve data
+    - Added functions for backend to manipulate data
 - Frontend
-    - JavaScript AJAX requests to backend
+    - Wrote connection.js, responsible for JavaScript AJAX requests to backend
+    - Used AJAX responses from backend to populate html pages with data
+        - Ex. SelectBoard.html, DiscussionBoard.html
 - Backend
     - Using AJAX requests to call appropriate MVC functions and send AJAX response
+    - Implemented some of the MVC functions that deal with the database
