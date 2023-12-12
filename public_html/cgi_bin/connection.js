@@ -144,6 +144,16 @@ class Connection {
         return Object.values(data.data)
     }
 
+    async quitBoard(boardId) {
+        enforceTypes(boardId, "number")
+        let data = await Connection.ajax("../cgi_bin/boardController.php", {action: "quit_board", board_id: boardId})
+        enforceTypes(data, "object", data.success, "boolean", data.status, "number")
+        if (!data.success) {
+            throw new Error("Action failed with error code " + data.status)
+        }
+        return data.status
+    }
+
     static async connect() {
         let data = await Connection.ajax("../cgi_bin/loginhandler.php", {action: "authenicate"})
         enforceTypes(data, "object", data.success, "boolean")

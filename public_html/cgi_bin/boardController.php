@@ -490,6 +490,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'status' => 1]);
                 }
                 break;
+            
+            case 'quit_board':
+                if (isset($request->board_id)) {
+                    $boardModel = new boardModel();
+                    $status = $boardModel->removeMember($_SESSION['username'], $request->board_id);
+                    echo json_encode(['success' => true, 'status' => $status]);
+                } else {
+                    echo json_encode(['success' => false, 'status' => 1]);
+                }
+                break;
 
             
             default:
