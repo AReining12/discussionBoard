@@ -91,10 +91,10 @@ class boardController {
 
         $boardModel->approveMember($username, $boardID);
 
-        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($curBoardID);
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
 
         // Redirect
-        header("Location: " . $redirectUrl);
+//        header("Location: " . $redirectUrl);
         exit;
     }
 
@@ -106,10 +106,10 @@ class boardController {
 
         $boardModel->rejectMember($username, $boardID);
 
-        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($curBoardID);
+        $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
 
         // Redirect
-        header("Location: " . $redirectUrl);
+//        header("Location: " . $redirectUrl);
         exit;
     }
 

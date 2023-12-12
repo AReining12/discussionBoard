@@ -427,6 +427,30 @@ class boardModel {
         include('db_connect.php');
 
         $stmt = $conn->prepare("SELECT approve(?, ?)");
+        //echo "$username";
+        //echo "$boardID";
+
+        // Bind parameters
+        $stmt->bind_param("si", $username, $boardID);
+        // echo "$result";
+
+        if (!$stmt->execute()) {
+            // Log or handle the error
+            echo "Error: " . $stmt->error;
+        } else {
+            echo "True";
+        }
+
+        $stmt->close();
+        $conn->close();
+
+    }
+  
+    public function rejectMember($username, $boardID){
+        // verify that channel exists
+        include('db_connect.php');
+
+        $stmt = $conn->prepare("SELECT reject(?, ?)");
 
         // Bind parameters
         $stmt->bind_param("si", $username, $boardID);
@@ -434,61 +458,13 @@ class boardModel {
         if (!$stmt->execute()) {
             // Log or handle the error
             echo "Error: " . $stmt->error;
+        } else {
+            echo "True";
         }
 
         $stmt->close();
         $conn->close();
-
     }
-
-    // public function isOnBoard($userID, $boardID){
-    //     $sql = "SELECT COUNT(*) AS userCount
-    //     FROM board_users
-    //     WHERE user_id = :userId AND board_id = :boardId";
-
-    //     $stmt = $pdo->prepare($sql);
-
-    //     // Bind parameters
-    //     $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
-    //     $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
-
-    //     // Execute the query
-    //     $stmt->execute();
-
-    //     // Fetch the result
-    //     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    //     // Check if the user is a member of the board
-    //     $userCount = $result['userCount'];
-    //     if ($userCount > 0) {
-    //         return true;
-    //     } else {
-    //         $sql = "SELECT COUNT(*) AS userCount
-    //         FROM board_applicants
-    //         WHERE user_id = :userId AND board_id = :boardId";
-
-    //         $stmt = $conn->prepare($sql);
-
-    //         // Bind parameters
-    //         $stmt->bindParam(':userId', $userID, PDO::PARAM_INT);
-    //         $stmt->bindParam(':boardId', $boardID, PDO::PARAM_INT);
-
-    //         // Execute the query
-    //         $stmt->execute();
-
-    //         // Fetch the result
-    //         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    //         // Check if the user is a member of the board
-    //         $userCount = $result['userCount'];
-    //         if ($userCount > 0) {
-    //             return true;
-    //         } else {
-    //             return false;
-    //         }
-                
-    //     }
-    // }
 
     public function addToWaitingList($username, $boardID){
         include('db_connect.php');
