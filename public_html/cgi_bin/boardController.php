@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 // Anna Reining, 260885420
 // Handles discussion boards, members, channels, and messages
