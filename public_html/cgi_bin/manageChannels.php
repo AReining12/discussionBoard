@@ -1,4 +1,5 @@
 
+
 <?php
 error_reporting(E_ALL);
 include('session_start.php');
@@ -106,7 +107,7 @@ include('boardController.php');
             left: 50%;
             transform: translate(-50%, -50%);
         }
-      
+
         .logout {
             position: absolute;
             top: 0;
@@ -202,8 +203,8 @@ include('boardController.php');
                         <div class="create-course-container" style="text-align: center;">
                             <!-- Course Creation Form -->
                            <!-- Form to add or remove channels -->
-                           <a class="btn btn-primary" href="add_member.php">Add Member</a> <br>
-                           <a href="remove_member.php">Remove Member</a>
+                           <a class="btn btn-primary" href="create_channel.php">Create Channel</a><br>
+                           <a href="remove_channel.php">Delete Channel</a>
                         </div>
                     </div>
                 </div>
