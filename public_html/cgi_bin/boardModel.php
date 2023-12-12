@@ -60,12 +60,12 @@ class boardModel {
         return $code;
     }
 
-    public function addMember($boardID, $userID){
-        include('db_connect.php');
-        // updates board users with new user on given board id
-        // default is_admin is 0
-        $sql = $conn->prepare("INSERT INTO `board_users` (`user_id`, `board_id`, `is_board_admin`) VALUES ('{$userID}', '{$boardID}', 0)");
-        $sql->execute();
+    public function addMember($username, $boardID){
+        $code = $this->addToWaitingList($username, $boardID);
+        if ($code != 0) {
+            return $code;
+        }
+        return $this->approveMember($username, $boardID);
     }
 
     public function removeMember($username, $boardID){

@@ -56,11 +56,11 @@ class boardController {
         if ($action == 'addMember'){
             // call addMember
             $boardModel = new boardModel();
-            $boardModel->addMember($boardID, $userID);
+            $boardModel->addMember($username, $boardID);
         } else {
             // call removeMember
             $boardModel = new boardModel();
-            $boardModel->removeMember($boardID, $userID);
+            $boardModel->removeMember($username, $boardID);
         }
         header("Location: ../pages/DiscussionBoard.html");
         exit();
@@ -74,7 +74,7 @@ class boardController {
         $userID = $userModel->getUserID($username);
 
         $boardModel = new boardModel();
-        $boardModel->addMember($boardID, $userID);
+        $boardModel->addMember($username, $boardID);
 
         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
 
@@ -94,7 +94,7 @@ class boardController {
         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
 
         // Redirect
-//        header("Location: " . $redirectUrl);
+        header("Location: " . $redirectUrl);
         exit;
     }
 
@@ -109,11 +109,11 @@ class boardController {
         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
 
         // Redirect
-//        header("Location: " . $redirectUrl);
+        header("Location: " . $redirectUrl);
         exit;
     }
 
-    public function removeMember($boardID, $username){
+    public function removeMember($username, $boardID){
         $userModel = new userModel();
 
 
@@ -121,7 +121,7 @@ class boardController {
         $userID = $userModel->getUserID($username);
 
         $boardModel = new boardModel();
-        $boardModel->removeMember($boardID, $userID);
+        $boardModel->removeMember($username, $boardID);
 
         $redirectUrl = "../pages/DiscussionBoard.html?course=" . urlencode($boardID);
 
@@ -280,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $username = $_POST['name'];
 
                 $boardController = new boardController();
-                $boardController->addMember($boardID, $username);
+                $boardController->addMember($username, $boardID);
 
                 break;
 
@@ -296,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $username = $_POST['name'];
 
                 $boardController = new boardController();
-                $boardController->removeMember($boardID, $username);
+                $boardController->removeMember($username, $boardID);
                 
                 break;
 
