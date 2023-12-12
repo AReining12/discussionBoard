@@ -166,7 +166,7 @@ class Connection {
 
     static async connect() {
         let data = await Connection.ajax("../cgi_bin/loginhandler.php", {action: "authenicate"})
-        enforceTypes(data, "object", data.success, "boolean", data.username, "string")
+        enforceTypes(data, "object", data.success, "boolean")
         if (!data.success) {
             throw new Error("Could not authenicate user, no session variable exists")
         }
