@@ -218,7 +218,7 @@
         }
 
         #filterChannel button {
-            font-size: min(1.5vw, 1em);
+            font-size: 1.5vw;
         }
 
         .view-waiting-list {
@@ -227,13 +227,6 @@
 
         .view-waiting-list:hover {
             cursor: pointer;
-        }
-
-        .group {
-            background-color: gold;
-            border-radius: 1em;
-            font-size: 0.8em;
-            padding: 0.2em 0.5em;
         }
 
     </style>
@@ -315,7 +308,6 @@
                 let id = parseInt(getUrlParameter('course'))
                 let found = false
                 let exists = false
-                let admin = false
                 let name = ""
                 user_boards.forEach(row => {
                     if (row.board_id == id) {
@@ -332,10 +324,8 @@
                             name = row.board_name
                         }
                     })
-                } else {
-                    admin = await connection.isAdmin(id)
                 }
-                handleCourseSpecificLogic(found, exists, admin, name)
+                handleCourseSpecificLogic(found, exists, name)
                 if (found) {
                     let result = await connection.setBoard(id)
                     if (!result.success) {
@@ -435,7 +425,7 @@
         }
         
         // Logic specific to handling course-related features
-        function handleCourseSpecificLogic(isValidUser, boardExists, admin, courseName) {
+        function handleCourseSpecificLogic(isValidUser, boardExists, courseName) {
             // Create a new element for the welcome section
             const welcomeSection = document.createElement('div');
             welcomeSection.id = 'welcomeSection';
@@ -454,10 +444,17 @@
             // <h1>Discussion Board for ${courseName}</h1>
             welcomeTextDiv.innerHTML = `
             <h1>Discussion Board for ${courseName}</h1>
+            <div class="manage-buttons">
+                <button class="btn btn-primary" id="manageMembersBtn" onclick="window.location.href='../cgi_bin/manageMembers.php'">Manage Members</button>
+                <button class="btn btn-primary" id="manageChannelsBtn" onclick="window.location.href='../cgi_bin/manageChannels.php'">Manage Channels</button>
+                <button class="btn btn-primary" id="manageChannelMembersBtn" onclick="window.location.href='../cgi_bin/manageChannelMembers.php'">Manage Channel Members</button>
+
+            </div>
             `;
 
             // Append the text container to the welcome section
             welcomeSection.appendChild(welcomeTextDiv);
+
 
             // Add the welcome section to the content area
             const contentArea = document.getElementById('contentArea');
@@ -469,15 +466,14 @@
             }
 
             if (!isValidUser) {
-                welcomeTextDiv.innerHTML = "<h3>You must be a member of this board to view the content</h3>"
+                welcomeTextDiv.innerHTML = "<h3>You must be a member of this board to view the content</h3><div id='join' style='width:100%'>Request to join</div>"
+                document.getElementById("join").addEventListener('click', function () {
+                    alert('Application denied')
+                })
                 return
             }
 
-            if (!admin) {
-                return
-            }
-
-            // Create Manage Board Members button
+            /* Create Manage Board Members button
             const manageBoardMemberButton = document.createElement('div');
             manageBoardMemberButton.className = 'manage-board-member';
             manageBoardMemberButton.id = 'manageBoardMember';
@@ -493,7 +489,12 @@
             const manageChannelMembersButton = document.createElement('div');
             manageChannelMembersButton.className = 'manage-channel-members';
             manageChannelMembersButton.id = 'manageChannelMembers';
-            manageChannelMembersButton.textContent = 'Manage Channel Members';
+            manageChannelMembersButton.textContent = 'Manage Channel Members';*/
+            // <div class="manage-buttons">
+            //     <div class="manage-board-member" id="manageBoardMember">Manage Board Members</div>
+            //     <div class="manage-channels" id="manageChannels">Manage Channels</div>
+            //     <div class="manage-channel-members" id="manageChannelMembers">Manage Channel Members</div>
+            // </div>
 
             /* Create Manage Channel Members button
             const viewWaitingListButton = document.createElement('div');
@@ -502,41 +503,42 @@
             viewWaitingListButton.textContent = 'View Waiting List';*/
 
             // Append buttons to the welcome section
+            /*
             welcomeSection.appendChild(manageBoardMemberButton);
             welcomeSection.appendChild(manageChannelsButton);
-            welcomeSection.appendChild(manageChannelMembersButton); 
+            welcomeSection.appendChild(manageChannelMembersButton); */
             // welcomeSection.appendChild(viewWaitingListButton);
 
             //  Event listeners for buttons:
-            document.getElementById('manageBoardMember').addEventListener('click', function() {
-                try {
-                    window.location.href = '../cgi_bin/manageMembers.php';
-                } catch (error) {
-                    console.error('Error navigating to manageMembers.php:', error);
-                }
-            });
+            // document.getElementById('manageBoardMember').addEventListener('click', function() {
+            //     try {
+            //         window.location.href = '../cgi_bin/manageMembers.php';
+            //     } catch (error) {
+            //         console.error('Error navigating to manageMembers.php:', error);
+            //     }
+            // });
 
-            document.getElementById('manageChannels').addEventListener('click', function() {
-                try {
-                    window.location.href = '../cgi_bin/manageChannels.php';
-                } catch (error) {
-                    console.error('Error navigating to manageChannels.php:', error);
-                }
-            });
+            // document.getElementById('manageChannels').addEventListener('click', function() {
+            //     try {
+            //         window.location.href = '../cgi_bin/manageChannels.php';
+            //     } catch (error) {
+            //         console.error('Error navigating to manageChannels.php:', error);
+            //     }
+            // });
 
-            document.getElementById('manageChannelMembers').addEventListener('click', function() {
-                try {
-                    window.location.href = '../cgi_bin/manageChannelMembers.php';
-                } catch (error) {
-                    console.error('Error navigating to manageChannelMembers.php:', error);
-                }
-            });
+            // document.getElementById('manageChannelMembers').addEventListener('click', function() {
+            //     try {
+            //         window.location.href = '../cgi_bin/manageChannelMembers.php';
+            //     } catch (error) {
+            //         console.error('Error navigating to manageChannelMembers.php:', error);
+            //     }
+            // });
 
             document.getElementById('viewwaitinglist').addEventListener('click', function() {
                 try {
                     window.location.href = '../cgi_bin/waitlist.php';
                 } catch (error) {
-                    console.error('Error navigating to waitlist.php:', error);
+                    console.error('Error navigating to manageChannelMembers.php:', error);
                 }
             });
 
@@ -558,6 +560,8 @@
             }
 
         });
+
+        
 
         document.getElementById('viewwaitinglist').addEventListener('click', function() {
             const welcomeSection = document.getElementById('welcomeSection');
@@ -601,10 +605,17 @@
                         let content = document.getElementById('postContent')
                         let channel = document.getElementById('postVisibility')
                         connection.sendMessage(title.value, content.value, parseInt(channel.value)).then(function () { 
-                            let postTitle = title.value;
-                            title.value = ""
-                            content.value = ""
-                            refreshPost(postTitle)
+                            connection.getBoardMessages().then(newPosts => {
+                                posts = newPosts
+                                displayPosts()
+                                Object.values(document.getElementsByClassName('sidebar-link')).forEach(link => {
+                                    if (link.innerHTML === title.value) {
+                                        link.click()
+                                    }
+                                })
+                                title.value = ""
+                                content.value = ""
+                            })
                         }).catch(error => {
                             console.error(error)
                         })
@@ -618,38 +629,21 @@
             const postList = document.querySelector('.post-list');
             postList.innerHTML = ''; // Clear existing posts
     
-            let threads = []
             filteredPosts.forEach(post => {
-                let exists = false
-                threads.forEach(thread => {
-                    if (post.message_title == thread[0].message_title && post.channel_id == thread[0].channel_id) {
-                        thread.unshift(post)
-                        exists = true
-                    }
-                })
-                if (!exists) {
-                    threads.push([post])
-                }
-            })
-
-            threads.forEach(thread => {
                 const postElement = document.createElement('div');
                 postElement.classList.add('sidebar-link');
-                postElement.textContent = thread[0].message_title //post.title;
-                postElement.onclick = () => displayPostContent(thread);
+                postElement.textContent = post.message_title //post.title;
+                postElement.onclick = () => displayPostContent(post);
                 postList.appendChild(postElement);
             });
 
         }
     
         // Function to display post content
-        function displayPostContent(posts) {
+        function displayPostContent(post) {
             const contentArea = document.getElementById('postDisplayArea');
 //            const postContent = `<h3>${post.title}</h3><p>${post.content}</p>`;
-            let postContent = `<h3 style="margin: 0.5em 0">${posts[0].message_title} <span class='channel' style='background-color: hsl(` + ((posts[0].channel_id*130)%360) + `,100%,75%)'>${posts[0].channel_name}</span></h3>`
-            posts.forEach(post => {
-                postContent += `<h5>${post.author} <span class='group'>${post.group_name}</span> <span class="time">` + legibleTime(new Date() - new Date(post.message_time)) + ` ago</span></h5><p>${post.message_text}</p>`;
-            })
+            const postContent = `<h3 style="margin: 0.5em 0">${post.message_title} <span class='channel' style='background-color: hsl(` + ((post.channel_id*130)%360) + `,100%,75%)'>${post.channel_name}</span></h3><h5>${post.author} <span class="time">` + legibleTime(new Date() - new Date(post.message_time)) + ` ago</span></h5><p>${post.message_text}</p>`;
             
             // Add a textarea for comments
             const commentSection = `
@@ -662,10 +656,10 @@
             // Replace existing content in contentArea with the new post content
             contentArea.innerHTML = postContent + commentSection;
 
-            // Add event listener to the Post Comment button
-            document.getElementById('postComment').addEventListener('click', function() {
-                postComment(posts[0].message_title, posts[0].channel_id); // You might want to pass an identifier for the post
-            });
+        // Add event listener to the Post Comment button
+        document.getElementById('postComment').addEventListener('click', function() {
+            postComment(post.title); // You might want to pass an identifier for the post
+        });
 
             // Hide 'Make a Post' form section
             const makepostSection = document.getElementById('makepostSection');
@@ -693,29 +687,13 @@
             displayPosts(filteredPosts);
         }
 
-        function postComment(postTitle, channel_id) {
+        function postComment(postTitle) {
             const commentText = document.getElementById('commentText').value;
             // Logic to handle the comment post
             // For example, send the comment to your server and then update the UI
-            //console.log("Comment on post", postTitle, ":", commentText);
-            connection.sendMessage(postTitle, commentText, channel_id).then(status => {
-                refreshPost(postTitle)
-            })
-
+            console.log("Comment on post", postTitle, ":", commentText);
             // Clear the comment textarea after posting
             document.getElementById('commentText').value = '';
-        }
-
-        function refreshPost(postTitle) {
-            connection.getBoardMessages().then(newPosts => {
-            posts = newPosts
-            displayPosts()
-            Object.values(document.getElementsByClassName('sidebar-link')).forEach(link => {
-                if (link.innerHTML === postTitle) {
-                    link.click()
-                }
-            })
-        })
         }
 
     </script>
